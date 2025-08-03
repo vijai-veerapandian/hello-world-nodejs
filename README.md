@@ -54,10 +54,7 @@ Run `npm test` to execute all tests and generate coverage reports.
 
 ### Docker/Containzerization
 
-The application can be deployed as a Docker container or into a Kubernetes cluster.
-
-
-Now, the application can do deployed as Docker, and also into Kubernetes.
+Now, the application can do deployed as Docker, or into Kubernetes cluster.
 
 ## Features
 
