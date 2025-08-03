@@ -1,3 +1,4 @@
+// server.js
 const express = require('express');
 
 const app = express();
@@ -18,3 +19,13 @@ app.get('/api/health', (req, res) => {
         timestamp: new Date().toISOString()
     });
 });
+
+// Start server only if this file is run directly
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
+}
+
+// Export app for testing
+module.exports = app;
