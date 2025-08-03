@@ -9,7 +9,7 @@ app.use(express.json());
 
 // Routes
 app.get('/', (req, res) => {
-    res.status(200).send('Hello, World!');
+    res.status(200).send('Hello, World! version1');
 });
 
 app.get('/api/health', (req, res) => {
