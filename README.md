@@ -1,19 +1,114 @@
 # Hello World Node.js Application
 
-A simple Hello World application built with Node.js and Express, featuring comprehensive test coverage.
+A simple "Hello, World!" application built with Node.js and Express. This project is containerized with Docker, includes deployment manifests for Kubernetes, and is set up with a CI/CD pipeline using GitHub Actions.
 
 ## Features
 
-- Simple HTTP server using Express.js
-- Health check endpoint
-- Comprehensive test suite with Jest
-- Development server with auto-reload using Nodemon
+-   **API**: Simple HTTP server using Express.js with a health check endpoint.
+-   **Testing**: Comprehensive test suite using Jest and Supertest.
+-   **Development**: Local development environment with auto-reload via Nodemon.
+-   **Containerization**:
+    -   Optimized, multi-stage production `Dockerfile`.
+    -   `Dockerfile.dev` for a consistent development and testing environment.
+    -   Non-root user for enhanced security.
+-   **Orchestration**: Production-ready Kubernetes deployment and service manifests.
+-   **CI/CD**: Automated testing, building, and deployment pipeline with GitHub Actions.
+
+## Prerequisites
+
+-   Node.js (v18 or later recommended)
+-   Docker
+-   kubectl (for Kubernetes deployment)
+
+## Getting Started
+
+### Local Development
+
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd hello-world-nodejs
+    ```
 
 ## Installation
 
-```bash
-npm install
-```
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+
+3.  **Run the server:**
+    -   For production mode: `npm start`
+    -   For development with auto-reload: `npm run dev`
+
+    The server will be available at `http://localhost:3000`.
+
+4.  **Run tests:**
+    ```bash
+    # Run all tests once
+    npm test
+
+    # Run tests in watch mode
+    npm run test:watch
+    ```
+
+## Docker Usage
+
+### Build the Docker Images
+
+-   **Production Image:**
+    ```bash
+    # Build the lean production image
+    docker build -t hello-world-app .
+    ```
+
+-   **Development Image:**
+    ```bash
+    # Build the development image with all dev dependencies
+    docker build -f Dockerfile.dev -t hello-world-app:dev .
+    ```
+
+### Run Containers
+
+-   **Run the Production Container:**
+    ```bash
+    docker run -p 3000:3000 --rm hello-world-app
+    ```
+
+-   **Run Tests in the Development Container:**
+    This ensures tests are run in an environment identical to the CI pipeline.
+    ```bash
+    docker run --rm hello-world-app:dev npm test
+    ```
+
+## Kubernetes Deployment
+
+1.  **Build and Push Image:**
+    Build the production image and push it to a container registry (e.g., Docker Hub, GCR).
+    ```bash
+    # Tag the image with your registry's path
+    docker tag hello-world-app your-registry/hello-world-app:latest
+
+    # Push the image
+    docker push your-registry/hello-world-app:latest
+    ```
+    *Note: For multi-architecture builds (e.g., `linux/amd64`, `linux/arm64`), use `docker buildx`.*
+
+2.  **Update Manifest:**
+    In `k8s-deployment.yaml`, change the `image` field to point to the image you just pushed.
+
+3.  **Deploy to Cluster:**
+    Apply the Kubernetes manifests to your cluster.
+    ```bash
+    kubectl apply -f k8s-deployment.yaml
+    ```
+
+4.  **Verify Deployment:**
+    ```bash
+    # Check the status of your deployment, pods, and service
+    kubectl get deployment,pod,svc
+
+    # Get the external
 
 ## Usage
 
@@ -306,7 +401,3 @@ docker run --rm hello-world-app:dev npm test
 4. Run tests: `npm test`
 5. Test in container: `docker run --rm hello-world-app:dev npm test`
 6. Submit a pull request
-
-## License
-
-MIT
