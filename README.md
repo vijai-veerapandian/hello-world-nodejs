@@ -52,13 +52,12 @@ The application includes comprehensive tests using Jest and Supertest:
 
 Run `npm test` to execute all tests and generate coverage reports.
 
-Docker Development:
+### Docker/Containzerization
 
-Docker Development
-Docker Development
-# Hello World Node.js Application
+The application can be deployed as a Docker container or into a Kubernetes cluster.
 
-A simple Hello World application built with Node.js and Express, featuring comprehensive test coverage, Docker support, and Kubernetes deployment configuration.
+
+Now, the application can do deployed as Docker, and also into Kubernetes.
 
 ## Features
 
