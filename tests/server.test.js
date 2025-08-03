@@ -9,7 +9,7 @@ describe('Hello World App', () => {
                 .get('/')
                 .expect(200);
 
-            expect(response.text).toBe('Hello, World!');
+            expect(response.text).toBe('Hello, World! version1');
         });
     });
 
