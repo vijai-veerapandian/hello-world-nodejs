@@ -49,16 +49,19 @@ stage('Dependency Scanning') {
 
         withCredentials([string(credentialsId: 'NVD_API_KEY', variable: 'NVD_KEY')]) {
             sh """
-                ./dependency-check/bin/dependency-check.sh \
-                --project MyProject \
-                --scan . \
-                --out dependency-check-reports \
-                --format ALL \
-                --prettyPrint \
-                --failOnCVSS 7 \
-                --nvdApiKey $NVD_KEY \
-                --nvdApiDelay 4000 \
-                --cveValidForHours 24
+                ./dependency-check/bin/dependency-check.sh \\
+                --scan . \\
+                --out dependency-check-reports \\
+                --format "ALL" \\
+                --prettyPrint \\
+                --failOnCVSS 7 \\
+                --nvdApiKey "\$NVD_KEY" \\
+                --nvdApiDelay 4000 \\
+                --cveValidForHours 24 \\
+                --exclude "**/node_modules/**" \\
+                --exclude "**/tests/**" \\
+                --exclude "**/dependency-check-reports/**" \\
+                --exclude ".git/**"
             """
         }
     }
