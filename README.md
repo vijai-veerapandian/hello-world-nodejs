@@ -87,7 +87,7 @@ Login into the Sonarqube and then create a local project and integrate it with J
 
 ![plugin](./assets/2025-08-04-053512.jpg)
 
-![plugin](./assets/2025-08-04-053512.jpg)
+![plugin](./assets/2025-08-04-053802.jpg)
 
 ![plugin](./assets/2025-08-04-053916.jpg)
 
