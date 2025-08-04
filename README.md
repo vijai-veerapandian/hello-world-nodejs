@@ -91,10 +91,32 @@ Login into the Sonarqube and then create a local project and integrate it with J
 
 ![plugin](./assets/2025-08-04-053916.jpg)
 
-![plugin](./assets/2025-08-04-061908.jpg
+![plugin](./assets/2025-08-04-061908.jpg)
 
 ![plugin](./assets/2025-08-04-064730.jpg)
 
+
+Here is the line I have added on the Jenkinsfile related to sonarqube intergration into the jenkinsfile.
+
+```
+    stage('SAST - SonarQube') {
+        steps {
+            sh 'echo $SONAR_SCANNER_HOME'
+            sh '''
+                $SONAR_SCANNER_HOME/bin/sonar-scanner \
+                  -Dsonar.host.url=http://192.168.2.206:9000 \
+                  -Dsonar.token=sqp_fabd16be54526ef3c3be68c2a67186ceff4fa5ba \
+                  -Dsonar.projectKey=hello-world-nodejs
+            '''
+        }
+    }
+```
+
+![plugin](./assets/2025-08-04-071005.jpg)
+
+![plugin](./assets/2025-08-04-071244.jpg)
+
+![plugin](./assets/2025-08-04-071412.jpg)
 
 
 
