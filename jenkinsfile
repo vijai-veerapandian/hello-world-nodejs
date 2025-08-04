@@ -83,7 +83,7 @@ stages {
         steps {
             sh 'echo $SONAR_SCANNER_HOME'
             sh '''
-                $SONAR_SCANNER_HOME/bin/sonar \
+                $SONAR_SCANNER_HOME/bin/sonar-scanner \
                   -Dsonar.host.url=http://192.168.2.206:9000 \
                   -Dsonar.token=sqp_fabd16be54526ef3c3be68c2a67186ceff4fa5ba \
                   -Dsonar.projectKey=hello-world-nodejs
