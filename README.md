@@ -79,7 +79,7 @@ Install the OWASP plugin in the Jenkins master and restart the jenkins master as
 
 Enable OWASP on Jenkins masters tools configuration.
 
-![plugin1](./assets/2025-08-04-083802.jpg)
+![plugin1](./assets/2025-08-04-192054.jpg)
 
 and update the jenkinsfile to accomdate owasp
 
