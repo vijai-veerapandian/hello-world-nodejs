@@ -1,5 +1,7 @@
 pipeline {
-agent vm01
+agent {
+    label vm01
+}
 tools {
     nodejs 'NodeJS-18' // Make sure this matches your Jenkins NodeJS installation name
 }
