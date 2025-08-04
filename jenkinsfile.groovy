@@ -81,7 +81,7 @@ stages {
     }
     
     stage('SAST - SonarQube') {
-        withSonarQubeEnv('sonarqube-server') { // Matches the name in "Manage Jenkins > Configure System"
+        withSonarQubeEnv('sonarqube-server') {
             sh 'sonar-scanner'
         }
     }
