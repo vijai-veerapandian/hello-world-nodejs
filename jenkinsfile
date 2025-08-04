@@ -42,25 +42,28 @@ stages {
         }
     }
     
-    stage('Dependency Scanning') {
-        steps {
-            echo 'Dependency scanning.'
-            sh 'mkdir -p dependency-check-reports'
+stage('Dependency Scanning') {
+    steps {
+        echo 'Dependency scanning...'
+        sh 'mkdir -p dependency-check-reports'
+
         withCredentials([string(credentialsId: 'NVD_API_KEY', variable: 'NVD_KEY')]) {
-            dependencyCheck additionalArguments: """
-                --scan ./
-                --out ./dependency-check-reports
-                --format ALL
-                --prettyPrint
-                --failOnCVSS 7
-                --nvdApiKey ${NVD_KEY}
-                --nvdApiDelay 4000
-                --nvdMaxRetryCount 10
+            sh """
+                ./dependency-check/bin/dependency-check.sh \
+                --project MyProject \
+                --scan . \
+                --out dependency-check-reports \
+                --format ALL \
+                --prettyPrint \
+                --failOnCVSS 7 \
+                --nvdApiKey $NVD_KEY \
+                --nvdApiDelay 4000 \
                 --cveValidForHours 24
-                """,
-                odcInstallation: 'OWASP-dependency-check-10'
+            """
         }
     }
+    
+    } 
     
     stage('Unit Testing') {
         options { retry(2) }
