@@ -192,6 +192,10 @@ and also update the jenkins.groovy file to use sonarqube-server
     }
 ```
 
+Lets re-run the pipeline.
+
+![pipeline](./assets/2025-08-04-195200.jpg)
+
 ## Docker Usage
 
 The project includes two Dockerfiles:
