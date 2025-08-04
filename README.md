@@ -77,6 +77,8 @@ Create jenkinsfile and create a pipepline
 
 Install sonarqube plugin inside Jenkins master.
 
+![plugin](./assets/2025-08-04-050609.jpg)
+
 ![plugin](./assets/2025-08-04-044851.jpg)
 
 ![plugin](./assets/2025-08-04-050127.jpg)
@@ -112,22 +114,18 @@ Here is the line I have added on the Jenkinsfile related to sonarqube intergrati
     }
 ```
 
+![plugin](./assets/2025-08-04-050414.jpg)
+
+![plugin](./assets/2025-08-04-052600.jpg)
+
+![plugin](./assets/2025-08-04-052719.jpg)
+
 ![plugin](./assets/2025-08-04-071005.jpg)
 
 ![plugin](./assets/2025-08-04-071244.jpg)
 
 ![plugin](./assets/2025-08-04-071412.jpg)
 
-
-
-
-![plugin](./assets/2025-08-04-050414.jpg)
-
-![plugin](./assets/2025-08-04-050609.jpg)
-
-![plugin](./assets/2025-08-04-052600.jpg)
-
-![plugin](./assets/2025-08-04-052719.jpg)
 
 ## Docker Usage
 
