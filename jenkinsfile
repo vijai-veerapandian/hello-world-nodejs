@@ -39,7 +39,7 @@ stages {
         }
     }
     
-    stage('Run Tests') {
+    stage('Unit Test') {
         steps {
             echo 'Running tests...'
             sh 'npm test'
@@ -48,6 +48,7 @@ stages {
             always {
                 // Archive test results if you generate them
                 echo 'Test stage completed'
+                junit allowEmptyResults: true, stdioRetention: '', testResults: 'test-results.xml'
             }
         }
     }
