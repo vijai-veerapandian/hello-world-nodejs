@@ -63,6 +63,9 @@ npm run test:watch
 
 Create jenkinsfile and create a pipepline 
 
+![install](./assets/2025-08-04-185855.jpg)
+
+![install](./assets/2025-08-04-185948.jpg)
 <image>
 <image>
 
