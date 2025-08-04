@@ -72,7 +72,7 @@ Create jenkinsfile and create a pipepline
 
 ## Integrate SonarQube into the Jenkins Pipeline
 
-well, use this Github to quickly setup sonarqube docker-compose up and running on our Environment. 
+well, use this Github to quickly setup sonarqube docker-compose up and running in the Environment. 
 https://github.com/vijai-veerapandian/sonarqube-setup 
 
 then, Install sonarqube plugin inside Jenkins master.
