@@ -9,6 +9,7 @@ tools {
 environment {
     NODE_ENV = 'test'
     PORT = 3000
+    SONAR_SCANNER_HOME = tool 'sonarqube-scanner-7';
 }
 
 stages {
@@ -40,7 +41,13 @@ stages {
         }
     }
     
-    stage('Unit Test') {
+    stage('Dependency Scanning') {
+        steps {
+            echo 'Dependency scanning.'
+        }
+    }
+    
+    stage('Unit Testing') {
         options { retry(2) }
         steps {
             echo 'Running tests...'
@@ -69,6 +76,18 @@ stages {
                     sh 'npm audit --audit-level=moderate || echo "Security audit completed with warnings"'
                 }
             }
+        }
+    }
+    
+    stage('SAST - SonarQube') {
+        steps {
+            sh 'echo $SONAR_SCANNER_HOME'
+            sh '''
+                $SONAR_SCANNER_HOME/bin/sonar-scanner \
+                  -Dsonar.host.url=http://192.168.2.206:9000 \
+                  -Dsonar.token=sqp_fabd16be54526ef3c3be68c2a67186ceff4fa5ba \
+                  -Dsonar.projectKey=hello-world-nodejs
+            '''
         }
     }
     
