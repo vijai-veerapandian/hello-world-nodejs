@@ -9,7 +9,6 @@ tools {
 environment {
     NODE_ENV = 'test'
     PORT = 3000
-    NVD_API_KEY = credentials ('nvd-api-key')
     SONAR_SCANNER_HOME = tool 'sonarqube-scanner-7';
 }
 
@@ -45,7 +44,6 @@ stages {
     stage('Dependency Scanning') {
         steps {
             echo 'Running OWASP Dependency Check..'
-            sh 'mkdir -p dependency-check-reports'
 
             withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_KEY')]) {
                 dependencyCheck additionalArguments: """
@@ -57,6 +55,11 @@ stages {
                     --nvdApiKey \$NVD_KEY
                     --nvdApiDelay 4000
                     --nvdMaxRetryCount 10
+                    --exclude "**/node_modules/**"
+                    --exclude "**/tests/**"
+                    --exclude "**/*.test.js"
+                    --exclude "**/dependency-check-reports/**"
+                    --exclude ".git/**"
                     """, 
                 odcInstallation: 'OWASP-Dependency-check-12'
             }
