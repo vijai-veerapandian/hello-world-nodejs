@@ -42,7 +42,18 @@ stages {
     stage('Dependency Scanning') {
         steps {
             echo 'Running OWASP Dependency Check..'
-            dependencyCheck additionalArguments: '--scan . --out . --format ALL --prettyPrint', odcInstallation: 'OWASP-dependency-check-10'
+            // Use withCredentials to securely inject the NVD API key
+            withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_TOKEN')]) {
+                dependencyCheck(
+                    additionalArguments: """
+                        --scan .
+                        --out .
+                        --format ALL
+                        --nvdApiKey '${NVD_API_TOKEN}'
+                    """,
+                    odcInstallation: 'OWASP-dependency-check-10'
+                )
+            }
         }
     }
         
