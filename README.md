@@ -93,6 +93,9 @@ Login into the Sonarqube and then create a local project and integrate it with J
 
 ![plugin](./assets/2025-08-04-061908.jpg
 
+![plugin](./assets/2025-08-04-064730.jpg)
+
+
 
 
 
