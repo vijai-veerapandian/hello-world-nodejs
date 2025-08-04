@@ -9,6 +9,7 @@ tools {
 environment {
     NODE_ENV = 'test'
     PORT = 3000
+    NVD_API_KEY = credentials ('NVD_API_KEY')
     SONAR_SCANNER_HOME = tool 'sonarqube-scanner-7';
 }
 
