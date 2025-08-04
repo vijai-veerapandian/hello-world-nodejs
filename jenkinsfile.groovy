@@ -81,8 +81,10 @@ stages {
     }
     
     stage('SAST - SonarQube') {
-        withSonarQubeEnv('sonarqube-server') {
-            sh 'sonar-scanner'
+        steps {
+            withSonarQubeEnv('sonarqube-server') {
+                sh 'sonar-scanner'
+            }
         }
     }
     
