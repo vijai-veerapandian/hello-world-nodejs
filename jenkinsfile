@@ -1,5 +1,5 @@
 pipeline {
-agent any
+agent vm01
 tools {
     nodejs 'NodeJS-18' // Make sure this matches your Jenkins NodeJS installation name
 }
@@ -8,6 +8,20 @@ environment {
     NODE_ENV = 'test'
     PORT = 3000
 }
+
+stages {
+    stage('Setup') {
+        steps {
+            echo 'Ensuring Node.js is available...'
+            sh '''
+                if ! command -v node >/dev/null; then
+                    echo "Node.js not found in PATH!"
+                    exit 1
+                fi
+                echo "Using Node version: $(node -v)"
+                '''
+        }
+    }
 
 stages {
     stage('Checkout') {
