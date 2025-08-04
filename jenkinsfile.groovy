@@ -42,7 +42,7 @@ stages {
     stage('Dependency Scanning') {
         steps {
             echo 'Running OWASP Dependency Check..'
-            dependencyCheck additionalArguments: '--scan . --out . --format ALL --prettyPrint', odcInstallation: 'OWASP-Dependency-check-7.4.4'
+            dependencyCheck additionalArguments: '--scan . --out . --format ALL --prettyPrint', odcInstallation: 'OWASP-dependency-check-10'
         }
     }
         
