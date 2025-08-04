@@ -81,12 +81,15 @@ Install sonarqube plugin inside Jenkins master.
 
 ![plugin](./assets/2025-08-04-050127.jpg)
 
-![plugin](./assets/2025-08-04-050127.jpg)
+![plugin](./assets/2025-08-04-050251.jpg)
 
 ![plugin](./assets/2025-08-04-050414.jpg)
 
-![plugin](./assets/2025-08-04-050414.jpg)
+![plugin](./assets/2025-08-04-050609.jpg)
 
+![plugin](./assets/2025-08-04-052600.jpg)
+
+![plugin](./assets/2025-08-04-052719.jpg)
 
 ## Docker Usage
 
