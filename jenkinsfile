@@ -48,7 +48,7 @@ stages {
                     --scan \'./\'
                     --out \'./\'
                     --format \'ALL\'
-                    --prettyPrint''', odcInstallation: 'OWASP-Dependency-check-12'
+                    --prettyPrint''', odcInstallation: 'OWASP-Dependency-check-10'
         }
     }
         
