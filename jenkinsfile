@@ -44,6 +44,13 @@ stages {
     stage('Dependency Scanning') {
         steps {
             echo 'Dependency scanning.'
+            sh 'mkdir -p dependency-check-reports'
+                dependencyCheck additionalArguments: '''
+                    --scan ./
+                    --out ./dependency-check-reports
+                    --format ALL
+                    ''',
+                     odcInstallation: 'OWASP-dependency-check-10'
         }
     }
     
