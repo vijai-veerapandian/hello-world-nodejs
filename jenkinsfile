@@ -44,24 +44,11 @@ stages {
     stage('Dependency Scanning') {
         steps {
             echo 'Running OWASP Dependency Check..'
-
-            withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_KEY')]) {
-                dependencyCheck additionalArguments: """
-                    --scan ./
-                    --out ./dependency-check-reports
-                    --format ALL
-                    --prettyPrint
-                    --failOnCVSS 7
-                    --nvdApiKey \$NVD_KEY
-                    --nvdApiDelay 4000
-                    --nvdMaxRetryCount 10
-                    --exclude "**/node_modules/**"
-                    --exclude "**/tests/**"
-                    --exclude "**/*.test.js"
-                    --exclude "**/dependency-check-reports/**"
-                    --exclude ".git/**"
-                    """, 
-                odcInstallation: 'OWASP-Dependency-check-12'
+            dependencyCheck additionalArguments: '''
+                    --scan \'./\'
+                    --out \'./\'
+                    --format \'ALL\'
+                    --prettyPrint''', odcInstallation: 'OWASP-Dependency-check-12'
             }
         }
     } 
