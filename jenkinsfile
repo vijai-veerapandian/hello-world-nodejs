@@ -40,7 +40,7 @@ stages {
     }
     
     stage('Unit Test') {
-        options { retry(2)}
+        options { retry(2) }
         steps {
             echo 'Running tests...'
             sh 'npm test'
