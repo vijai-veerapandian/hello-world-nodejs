@@ -49,10 +49,9 @@ stages {
                     --out \'./\'
                     --format \'ALL\'
                     --prettyPrint''', odcInstallation: 'OWASP-Dependency-check-12'
-            }
         }
-    } 
-    
+    }
+        
     stage('Unit Testing') {
         options { retry(2) }
         steps {
