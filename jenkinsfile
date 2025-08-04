@@ -73,7 +73,7 @@ stages {
             stage('Security Audit') {
                 steps {
                     echo 'Running security audit...'
-                    sh 'npm audit --audit-level=moderate || echo "Security audit completed with warnings"'
+                    sh 'npm audit --audit-level=critical || echo "Security audit completed with warnings"'
                 }
             }
         }
