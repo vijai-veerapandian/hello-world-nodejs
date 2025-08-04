@@ -81,11 +81,6 @@ Enable OWASP on Jenkins masters tools configuration.
 
 ![plugin1](./assets/2025-08-04-192054.jpg)
 
-and update the jenkinsfile to accomdate owasp
-
-```
-
-```
 Create NVD (National Vulnerability Database) API Key and then use that on the OWASP dependency check.
 
 File the form and then you'll receieve the API key over the email. Add that API secret into the Jenkins master configuration system and Find Global properties add in Environment Variables. 
@@ -98,6 +93,29 @@ Add: Name: NVD_API_KEY, Value: your-actual-api-key
 ![credentials](./assets/2025-08-04-193713.jpg)
 
 ![credentials](./assets/2025-08-04-193850.jpg)
+
+Now, update the jenkinsfile to accomdate owasp dependency check
+
+```
+    stage('Dependency Scanning') {
+        steps {
+            echo 'Running OWASP Dependency Check..'
+            // Use withCredentials to securely inject the NVD API key
+            withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_TOKEN')]) {
+                dependencyCheck(
+                    additionalArguments: """
+                        --scan .
+                        --out .
+                        --format ALL
+                        --nvdApiKey '${NVD_API_TOKEN}'
+                    """,
+                    odcInstallation: 'OWASP-dependency-check-10'
+                )
+            }
+        }
+    }
+```
+
 
 
 ## Integrate SonarQube into the Jenkins Pipeline
