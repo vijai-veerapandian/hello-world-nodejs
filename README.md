@@ -68,7 +68,15 @@ Create jenkinsfile and create a pipepline
 
 ![install](./assets/2025-08-04-042043.jpg)
 
+## Configure OWASP Dependency check
 
+Install the OWASP plugin in the Jenkins master
+
+and update the jenkinsfile to accomdate owasp
+
+```
+
+```
 
 ## Integrate SonarQube into the Jenkins Pipeline
 
