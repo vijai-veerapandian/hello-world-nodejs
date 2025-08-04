@@ -37,7 +37,7 @@ stages {
     stage('Install Dependencies') {
         steps {
             echo 'Installing Node.js dependencies...'
-            sh 'sleep 50s'
+            sh 'sleep 10s'
             sh 'npm clean-install'
         }
     }
