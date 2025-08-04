@@ -58,7 +58,7 @@ stages {
                     --nvdApiDelay 4000
                     --nvdMaxRetryCount 10
                     """, 
-                odcInstallation: 'OWASP-Dependency-check-10'
+                odcInstallation: 'OWASP-Dependency-check-12'
             }
         }
     } 
