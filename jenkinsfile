@@ -9,7 +9,7 @@ tools {
 environment {
     NODE_ENV = 'test'
     PORT = 3000
-    NVD_API_KEY = credentials ('NVD_API_KEY')
+    NVD_API_KEY = credentials ('nvd-api-key')
     SONAR_SCANNER_HOME = tool 'sonarqube-scanner-7';
 }
 
@@ -42,30 +42,25 @@ stages {
         }
     }
     
-stage('Dependency Scanning') {
-    steps {
-        echo 'Dependency scanning...'
-        sh 'mkdir -p dependency-check-reports'
+    stage('Dependency Scanning') {
+        steps {
+            echo 'Running OWASP Dependency Check..'
+            sh 'mkdir -p dependency-check-reports'
 
-        withCredentials([string(credentialsId: 'NVD_API_KEY', variable: 'NVD_KEY')]) {
-            sh """
-                ./dependency-check/bin/dependency-check.sh \\
-                --scan . \\
-                --out dependency-check-reports \\
-                --format "ALL" \\
-                --prettyPrint \\
-                --failOnCVSS 7 \\
-                --nvdApiKey "\$NVD_KEY" \\
-                --nvdApiDelay 4000 \\
-                --cveValidForHours 24 \\
-                --exclude "**/node_modules/**" \\
-                --exclude "**/tests/**" \\
-                --exclude "**/dependency-check-reports/**" \\
-                --exclude ".git/**"
-            """
+            withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_KEY')]) {
+                dependencyCheck additionalArguments: """
+                    --scan ./
+                    --out ./dependency-check-reports
+                    --format ALL
+                    --prettyPrint
+                    --failOnCVSS 7
+                    --nvdApiKey \$NVD_KEY
+                    --nvdApiDelay 4000
+                    --nvdMaxRetryCount 10
+                    """, 
+                odcInstallation: 'OWASP-Dependency-check-10'
+            }
         }
-    }
-    
     } 
     
     stage('Unit Testing') {
