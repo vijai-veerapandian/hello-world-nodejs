@@ -61,6 +61,15 @@ npm run test:watch
 
 ## Implement Jenkins Pipeline
 
+Create jenkinsfile and create a pipepline 
+
+<image>
+<image>
+
+![install](./assets/2025-08-04-042043.jpg)
+
+
+
 ## Integrate SonarQube into the Jenkins Pipeline
 
 
