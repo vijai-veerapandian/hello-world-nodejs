@@ -95,8 +95,7 @@ File the form and then you'll receieve the API key over the email. Add that API 
 
 Add: Name: NVD_API_KEY, Value: your-actual-api-key
 
-![plugin1](./assets/2025-08-04-114235.jpg)
-
+![credentials](./assets/2025-08-04-193713.jpg)
 
 
 ## Integrate SonarQube into the Jenkins Pipeline
