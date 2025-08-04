@@ -97,6 +97,8 @@ Add: Name: NVD_API_KEY, Value: your-actual-api-key
 
 ![credentials](./assets/2025-08-04-193713.jpg)
 
+![credentials](./assets/2025-08-04-193850.jpg)
+
 
 ## Integrate SonarQube into the Jenkins Pipeline
 
