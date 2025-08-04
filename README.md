@@ -152,6 +152,23 @@ Here is the line I have added on the Jenkinsfile related to sonarqube intergrati
 
 ![plugin](./assets/2025-08-04-071412.jpg)
 
+Instead of adding SonarQube url and token directly, lets add it on Jenkins Credentials provider. So, it'll be mashed.
+
+![plugin2](./assets/2025-08-04-185137.jpg)
+
+add the created SonarQube API token into the system configuration.
+
+![plugin2](./assets/2025-08-04-185441.jpg)
+
+and also update the jenkins.groovy file to use sonarqube-server
+
+```
+    stage('SAST - SonarQube') {
+        withSonarQubeEnv('sonarqube-server') { // Matches the name in "Manage Jenkins > Configure System"
+            sh 'sonar-scanner'
+        }
+    }
+```
 
 ## Docker Usage
 
