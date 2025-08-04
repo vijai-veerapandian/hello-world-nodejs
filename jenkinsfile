@@ -46,7 +46,7 @@ stages {
         steps {
             echo 'Dependency scanning.'
             sh 'mkdir -p dependency-check-reports'
-                dependencyCheck additionalArguments: '''
+                dependencyCheck additionalArguments: """
                     --scan ./
                     --out ./dependency-check-reports
                     --format ALL
@@ -55,7 +55,7 @@ stages {
                     --nvdApiKey ${NVD_API_KEY}
                     --nvdApiDelay 4000
                     --nvdMaxRetryCount 10
-                    ''',
+                    """,
                      odcInstallation: 'OWASP-dependency-check-10'
         }
     }
