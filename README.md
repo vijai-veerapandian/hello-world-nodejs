@@ -70,7 +70,13 @@ Create jenkinsfile and create a pipepline
 
 ## Configure OWASP Dependency check
 
-Install the OWASP plugin in the Jenkins master
+Install the OWASP plugin in the Jenkins master and restart the jenkins master as part of it.
+
+![plugin1](./assets/2025-08-04-083100.jpg)
+
+Enable OWASP on Jenkins masters tools configuration.
+
+![plugin1](./assets/2025-08-04-083802.jpg)
 
 and update the jenkinsfile to accomdate owasp
 
