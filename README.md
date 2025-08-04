@@ -77,9 +77,6 @@ https://github.com/vijai-veerapandian/sonarqube-setup
 
 then, Install sonarqube plugin inside Jenkins master.
 
-
-![plugin](./assets/2025-08-04-050609.jpg)
-
 ![plugin](./assets/2025-08-04-044851.jpg)
 
 ![plugin](./assets/2025-08-04-050127.jpg)
@@ -87,6 +84,8 @@ then, Install sonarqube plugin inside Jenkins master.
 ![plugin](./assets/2025-08-04-050251.jpg)
 
 Login into the Sonarqube and then create a local project and integrate it with Jenkins
+
+![plugin](./assets/2025-08-04-050609.jpg)
 
 ![plugin](./assets/2025-08-04-053512.jpg)
 
