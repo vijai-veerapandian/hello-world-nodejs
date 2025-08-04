@@ -72,6 +72,21 @@ Create jenkinsfile and create a pipepline
 
 ## Integrate SonarQube into the Jenkins Pipeline
 
+<login image>
+
+
+Install sonarqube plugin inside Jenkins master.
+
+![plugin](./assets/2025-08-04-044851.jpg)
+
+![plugin](./assets/2025-08-04-050127.jpg)
+
+![plugin](./assets/2025-08-04-050127.jpg)
+
+![plugin](./assets/2025-08-04-050414.jpg)
+
+![plugin](./assets/2025-08-04-050414.jpg)
+
 
 ## Docker Usage
 
