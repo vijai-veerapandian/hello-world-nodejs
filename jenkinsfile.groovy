@@ -35,7 +35,6 @@ stages {
     stage('Install Dependencies') {
         steps {
             echo 'Installing Node.js dependencies...'
-            sh 'sleep 5s'
             sh 'npm ci'
         }
     }
@@ -43,7 +42,7 @@ stages {
     stage('Dependency Scanning') {
         steps {
             echo 'Running OWASP Dependency Check..'
-            dependencyCheck additionalArguments: '--scan . --out . --format ALL --prettyPrint', odcInstallation: 'OWASP-Dependency-check-10.0.3'
+            dependencyCheck additionalArguments: '--scan . --out . --format ALL --prettyPrint', odcInstallation: 'OWASP-Dependency-check-7.4.4'
         }
     }
         
