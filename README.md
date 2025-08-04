@@ -197,6 +197,17 @@ npm test
 ```bash
 npm run test:watch
 ```
+#### Now, Implement Jenkins CI pipeline
+
+
+
+#### Integrate Sonarqube code quality
+
+
+
+
+
+
 
 ### Docker Usage
 
