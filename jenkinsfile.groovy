@@ -40,35 +40,39 @@ stages {
         }
     }
     
-    stage('Dependency Scanning') {
-        steps {
-            echo 'Running OWASP Dependency Check..'
-            // Use withCredentials to securely inject the NVD API key
-            withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_TOKEN')]) {
-                dependencyCheck(
-                    additionalArguments: """
-                        --scan .
-                        --out .
-                        --format ALL
-                        --nvdApiKey '${NVD_API_TOKEN}'
-                    """,
-                    odcInstallation: 'OWASP-dependency-check-10'
-                )
+    stage('Parallel Testing and Scanning') {
+        parallel {
+            stage('Dependency Scanning') {
+                steps {
+                    echo 'Running OWASP Dependency Check..'
+                    // Use withCredentials to securely inject the NVD API key
+                    withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_TOKEN')]) {
+                        dependencyCheck(
+                            additionalArguments: """
+                                --scan .
+                                --out .
+                                --format ALL
+                                --nvdApiKey '${NVD_API_TOKEN}'
+                            """,
+                            odcInstallation: 'OWASP-dependency-check-10'
+                        )
+                    }
+                }
             }
-        }
-    }
-        
-    stage('Unit Testing') {
-        options { retry(2) }
-        steps {
-            echo 'Running tests...'
-            sh 'npm test'
-        }
-        post {
-            always {
-                // Archive test results if you generate them
-                echo 'Test stage completed'
-                junit testResults: 'test-results.xml'
+                
+            stage('Unit Testing') {
+                options { retry(2) }
+                steps {
+                    echo 'Running tests...'
+                    sh 'npm test'
+                }
+                post {
+                    always {
+                        // Archive test results if you generate them
+                        echo 'Test stage completed'
+                        junit testResults: 'test-results.xml'
+                    }
+                }
             }
         }
     }
