@@ -100,27 +100,65 @@ stages {
     }
 
 
-    stage('Trivy scan Docker Image') {
+    stage('Trivy Vulnerability Scanning') {
         steps {
             echo "Scanning Docker image ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG} with Trivy..."
-            sh """
-               trivy image --exit-code 1 \\
-                    --severity CRITICAL \\
-                    --quiet \\
-                    --format json -o trivy-image-results.json \\
-                    ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG}
-            """
-
-            echo "Converting Trivy JSON report to HTML..."
             sh '''
-                trivy convert --format template --template @contrib/html.tpl -o trivy-report.html trivy-image-results.json
-            '''
+               trivy image --exit-code 1 \
+                    --severity CRITICAL \
+                    --quiet \
+                    --format json -o trivy-image-results.json \
+                    ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG}
+                
+                trivy image --exit-code 0 \
+                    --severity LOW,MEDIUM,HIGH \
+                    --quiet \
+                    --format json -o trivy-image-results.json \
+                    ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG}
+                '''
         }
         post {
             always {
                 echo "Archiving Trivy scan reports (JSON and HTML)..."
-                archiveArtifacts artifacts: 'trivy-image-results.json, trivy-report.html', allowEmptyArchive: true
+                sh '''
+                trivy convert \
+                    --format template --template "@/usr/local/share/trivy/templates/html.tpl" \
+                    --output trivy-image-MEDIUM-results.html trivy-image-MEDIUM-results.json
+                trivy convert \
+                    --format template --template "@/usr/local/share/trivy/templates/html.tpl" \
+                    --output trivy-image-CRITICAL-results.html trivy-image-CRITICAL-results.json
+
+                trivy convert \
+                    --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
+                    --output trivy-image-MEDIUM-results.xml trivy-image-MEDIUM-results.json
+                trivy convert \
+                    --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
+                    --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
+                '''
             }
+        }
+    }
+
+    post {
+        always {
+            junit allowEmptyResults: true, stdioRetention: '', testResults: 'test-results.xml'
+            junit allowEmptyResults: true, stdioRetention: '', testResults: 'dependency-check-junit.xml'
+
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './',
+            reportFiles: 'trivy-image-CRITICAL-results.html', reportName: 'Trivy Image Critical Vul Report',
+            reportTitles: '', useWrapperFileDirectly: true])
+
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './',
+            reportFiles: 'trivy-image-MEDIUM-results.html', reportName: 'Trivy Image Medium Vul Report',
+            reportTitles: '', useWrapperFileDirectly: true])
+
+            publishHTML([allowEmptyResults: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './',
+            reportFiles: 'dependency-check-report.html', reportName: 'OWASP Dependency Check Report',
+            reportTitles: '', useWrapperFileDirectly: true])
+
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './',
+            reportFiles: 'sonarqube-report.html', reportName: 'SonarQube Analysis Report',
+            reportTitles: '', useWrapperFileDirectly: true])
         }
     }
 
