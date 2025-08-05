@@ -10,7 +10,7 @@ environment {
     NODE_ENV = 'test'
     PORT = 3000
     // Define your Docker image name. Replace with your Docker Hub username or registry path.
-    DOCKER_IMAGE_NAME = 'vijai-veerapandian/hello-world-nodejs'
+    DOCKER_IMAGE_NAME = 'vijaiv/hello-world-nodejs'
     IMAGE_TAG         = "v1.0.${env.BUILD_NUMBER}"
     CONTAINER_NAME    = "hello-world-test-${env.BUILD_NUMBER}"
 }
@@ -191,6 +191,7 @@ stages {
             }
         }
     }
+
 }
 
 post {
