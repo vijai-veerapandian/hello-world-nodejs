@@ -201,7 +201,9 @@ Lets re-run the pipeline.
 ![pipeline](./assets/2025-08-04-224251.jpg)
 
 
+### Sonar Qube quick report
 
+![pipeline](./assets/2025-08-04-225720.jpg)
 
 ## Docker Usage
 
