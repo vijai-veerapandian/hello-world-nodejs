@@ -11,6 +11,8 @@ environment {
     PORT = 3000
     // Define your Docker image name. Replace with your Docker Hub username or registry path.
     DOCKER_IMAGE_NAME = 'vijai-veerapandian/hello-world-nodejs'
+    IMAGE_TAG         = "v1.0.${env.BUILD_NUMBER}"
+    CONTAINER_NAME    = "hello-world-test-${env.BUILD_NUMBER}"
 }
 
 stages {
@@ -92,24 +94,18 @@ stages {
 
     stage('Build Docker Image') {
         steps {
-            script {
-                echo "Building Docker image..."
-                def imageTag = "v1.0.${env.BUILD_NUMBER}"
-                sh "docker build -t ${env.DOCKER_IMAGE_NAME}:${imageTag} ."
-                sh "docker tag ${env.DOCKER_IMAGE_NAME}:${imageTag} ${env.DOCKER_IMAGE_NAME}:latest"
-            }
+            echo "Building Docker image with tag: ${env.IMAGE_TAG}"
+            sh "docker build -t ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG} ."
+            sh "docker tag ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG} ${env.DOCKER_IMAGE_NAME}:latest"
         }
     }
 
     stage('Test Built Image') {
         steps {
             script {
-                def imageTag = "v1.0.${env.BUILD_NUMBER}"
-                def containerName = "hello-world-test-${env.BUILD_NUMBER}"
-
-                echo "Starting container ${env.DOCKER_IMAGE_NAME}:${imageTag} for testing..."
+                echo "Starting container ${env.CONTAINER_NAME} from image ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG} for testing..."
                 // Run the container in detached mode and give it a name for easy cleanup
-                sh "docker run -d --name ${containerName} -p 3000:3000 ${env.DOCKER_IMAGE_NAME}:${imageTag}"
+                sh "docker run -d --name ${env.CONTAINER_NAME} -p 3000:3000 ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG}"
                 
                 // Wait for the container to become healthy by polling its health check status.
                 // This is more robust than a fixed sleep timer.
@@ -117,7 +113,7 @@ stages {
                 timeout(time: 2, unit: 'MINUTES') {
                     while (true) {
                         // Inspect the container's health status
-                        def healthStatus = sh(script: "docker inspect --format '{{.State.Health.Status}}' ${containerName}", returnStdout: true).trim()
+                        def healthStatus = sh(script: "docker inspect --format '{{.State.Health.Status}}' ${env.CONTAINER_NAME}", returnStdout: true).trim()
                         if (healthStatus == 'healthy') {
                             echo "Container is healthy!"
                             break
@@ -140,11 +136,10 @@ stages {
         post {
             always {
                 script {
-                    def containerName = "hello-world-test-${env.BUILD_NUMBER}"
-                    echo "Stopping and removing container ${containerName}..."
+                    echo "Stopping and removing container ${env.CONTAINER_NAME}..."
                     // Stop and remove the test container, ignoring errors if it doesn't exist
-                    sh "docker stop ${containerName} || true"
-                    sh "docker rm ${containerName} || true"
+                    sh "docker stop ${env.CONTAINER_NAME} || true"
+                    sh "docker rm ${env.CONTAINER_NAME} || true"
                 }
             }
         }
@@ -152,27 +147,24 @@ stages {
 
     stage('Scan Docker Image with Trivy') {
         steps {
-            script {
-                def imageTag = "v1.0.${env.BUILD_NUMBER}"
-                echo "Scanning Docker image ${env.DOCKER_IMAGE_NAME}:${imageTag} with Trivy..."
-                // This step requires Trivy to be installed on the agent 'vm01'.
-                // It will fail the build if Trivy finds any HIGH or CRITICAL vulnerabilities.
-                // You can adjust the --severity flag as needed (e.g., UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL).
-                // We scan for vulnerabilities and secrets, outputting the raw data to a JSON file.
-                sh '''
-                   trivy image --exit-code 1 \
-                        --severity HIGH,CRITICAL,LOW,MEDIUM \
-                        --scanners vuln,secret \
-                        --format json -o trivy-image-results.json \
-                        ${env.DOCKER_IMAGE_NAME}:${imageTag}
-                '''
+            echo "Scanning Docker image ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG} with Trivy..."
+            // This step requires Trivy to be installed on the agent 'vm01'.
+            // It will fail the build if Trivy finds any HIGH or CRITICAL vulnerabilities.
+            // You can adjust the --severity flag as needed (e.g., UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL).
+            // We scan for vulnerabilities and secrets, outputting the raw data to a JSON file.
+            sh '''
+               trivy image --exit-code 1 \\
+                    --severity HIGH,CRITICAL,LOW,MEDIUM \\
+                    --scanners vuln,secret \\
+                    --format json -o trivy-image-results.json \\
+                    ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG}
+            '''
 
-                echo "Converting Trivy JSON report to HTML..."
-                // Use Trivy's built-in HTML template to convert the JSON results to a readable HTML report.
-                sh '''
-                    trivy convert --format template --template "@contrib/html.tpl" -o trivy-report.html trivy-image-results.json
-                '''
-            }
+            echo "Converting Trivy JSON report to HTML..."
+            // Use Trivy's built-in HTML template to convert the JSON results to a readable HTML report.
+            sh '''
+                trivy convert --format template --template "@contrib/html.tpl" -o trivy-report.html trivy-image-results.json
+            '''
         }
         post {
             always {
