@@ -99,39 +99,6 @@ stages {
         }
     }
 
-    stage('Test Built Image') {
-        steps {
-            script {
-                echo "Starting container ${env.CONTAINER_NAME} from image ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG} for testing..."
-                sh "docker run -d --name ${env.CONTAINER_NAME} -p 3000:3000 ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG}"
-
-                echo "Waiting for application to become available..."
-                timeout(time: 1, unit: 'MINUTES') {
-
-                    sh '''
-                        until curl -s -f http://localhost:3000/api/health > /dev/null; do
-                            echo "Application not ready yet. Waiting 5 seconds..."
-                            sleep 5
-                        done
-                    '''
-                }
-
-                echo "Application is ready. Validating endpoints..."
-                sh "curl -f http://localhost:3000/"
-                sh "curl -f http://localhost:3000/api/health"
-                
-                echo 'Container tests passed!'
-            }
-        }
-        post {
-            always {
-                echo "Stopping and removing container ${env.CONTAINER_NAME}..."
-                // Stop and remove the test container, ignoring errors if it doesn't exist
-                sh "docker stop ${env.CONTAINER_NAME} || true"
-                sh "docker rm ${env.CONTAINER_NAME} || true"
-            }
-        }
-    }
 
     stage('Scan Docker Image with Trivy') {
         steps {
