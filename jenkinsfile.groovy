@@ -182,7 +182,7 @@ pipeline {
             ])
 
             publishHTML([
-                allowEmptyResults: true, 
+                allowMissing: true, 
                 alwaysLinkToLastBuild: true, 
                 keepAll: true, 
                 reportDir: './',
