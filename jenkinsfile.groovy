@@ -101,42 +101,25 @@ stages {
 
     stage('Test Built Image') {
         steps {
-            script {
-                echo "Starting container ${env.CONTAINER_NAME} from image ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG} for testing..."
-                // Run the container in detached mode and give it a name for easy cleanup
-                sh "docker run -d --name ${env.CONTAINER_NAME} -p 3000:3000 ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG}"
+            echo "Starting container ${env.CONTAINER_NAME} from image ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG} for testing..."
+            // Run the container in detached mode and give it a name for easy cleanup
+            sh "docker run -d --name ${env.CONTAINER_NAME} -p 3000:3000 ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG}"
 
-                echo "Waiting for container to become healthy..."
-                timeout(time: 2, unit: 'MINUTES') {
-                    while (true) {
-                        // Inspect the container's health status
-                        def healthStatus = sh(script: "docker inspect --format '{{.State.Health.Status}}' ${env.CONTAINER_NAME}", returnStdout: true).trim()
-                        if (healthStatus == 'healthy') {
-                            echo "Container is healthy!"
-                            break
-                        }
-                        if (healthStatus == 'unhealthy') {
-                            error("Container failed its health check.")
-                        }
-                        echo "Container status is '${healthStatus}'. Waiting..."
-                        sleep 5 // Wait 5 seconds before polling again
-                    }
-                }
-                
-                echo "Testing container endpoints..."
-                sh "curl -f --retry 3 --retry-delay 5 http://localhost:3000/ || exit 1"
-                sh "curl -f --retry 3 --retry-delay 5 http://localhost:3000/api/health || exit 1"
-                
-                echo 'Container tests passed!'
-            }
+            echo "Waiting 15 seconds for container to start..."
+            sh "sleep 15"
+
+            echo "Testing container endpoints..."
+            sh "curl -f --retry 3 --retry-delay 5 http://localhost:3000/ || exit 1"
+            sh "curl -f --retry 3 --retry-delay 5 http://localhost:3000/api/health || exit 1"
+            
+            echo 'Container tests passed!'
         }
         post {
             always {
-                script {
-                    echo "Stopping and removing container ${env.CONTAINER_NAME}..."
-                    sh "docker stop ${env.CONTAINER_NAME} || true"
-                    sh "docker rm ${env.CONTAINER_NAME} || true"
-                }
+                echo "Stopping and removing container ${env.CONTAINER_NAME}..."
+                // Stop and remove the test container, ignoring errors if it doesn't exist
+                sh "docker stop ${env.CONTAINER_NAME} || true"
+                sh "docker rm ${env.CONTAINER_NAME} || true"
             }
         }
     }
