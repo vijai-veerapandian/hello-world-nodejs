@@ -29,7 +29,7 @@ stages {
         }
     }
     
-    stage('Analysis & Testing') {
+    stage('OWASP Analysis scanning & Unit Testing') {
         parallel {
             stage('Dependency Scanning (OWASP)') {
                 steps {
@@ -100,7 +100,7 @@ stages {
     }
 
 
-    stage('Scan Docker Image with Trivy') {
+    stage('Trivy scan Docker Image') {
         steps {
             echo "Scanning Docker image ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG} with Trivy..."
             sh """
@@ -113,7 +113,7 @@ stages {
 
             echo "Converting Trivy JSON report to HTML..."
             sh '''
-                trivy convert --format template --template "@contrib/html.tpl" -o trivy-report.html trivy-image-results.json
+                trivy convert --format template --template @contrib/html.tpl -o trivy-report.html trivy-image-results.json
             '''
         }
         post {
