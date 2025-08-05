@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="3" failures="0" errors="0" time="0.858">
+  <testsuite name="Hello World App" errors="0" failures="0" skipped="0" timestamp="2025-08-05T21:01:08" time="0.776" tests="3">
+    <testcase classname="Hello World App GET / should return &quot;Hello, World!&quot; with status 200" name="Hello World App GET / should return &quot;Hello, World!&quot; with status 200" time="0.044">
+    </testcase>
+    <testcase classname="Hello World App GET /api/health should return health status with status 200" name="Hello World App GET /api/health should return health status with status 200" time="0.016">
+    </testcase>
+    <testcase classname="Hello World App GET /nonexistent should return 404 for non-existent routes" name="Hello World App GET /nonexistent should return 404 for non-existent routes" time="0.008">
+    </testcase>
+  </testsuite>
+</testsuites>
