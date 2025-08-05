@@ -4,7 +4,6 @@ agent {
 }
 tools {
     nodejs 'NodeJS-18'
-    tool 'sonarqube-scanner-7'
 }
 
 environment {
@@ -85,8 +84,14 @@ stages {
     stage('SAST (SonarQube)') {
         steps {
             echo "Running SonarQube analysis..."
+            // The withSonarQubeEnv wrapper injects the server URL and authentication token.
+            // Since the scanner is not being found in the PATH, we will get its location
+            // from the tool configuration and call it with an absolute path. This is the most reliable method.
             withSonarQubeEnv('sonarqube-server') {
-                sh 'sonar-scanner'
+                script {
+                    def scannerHome = tool 'sonarqube-scanner-7'
+                    sh "'${scannerHome}/bin/sonar-scanner'"
+                }
             }
         }
     }
