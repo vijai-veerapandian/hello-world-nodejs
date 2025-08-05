@@ -4,6 +4,7 @@ agent {
 }
 tools {
     nodejs 'NodeJS-18'
+    sonarScanner 'sonarqube-scanner-7'
 }
 
 environment {
