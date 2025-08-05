@@ -103,13 +103,13 @@ stages {
     stage('Scan Docker Image with Trivy') {
         steps {
             echo "Scanning Docker image ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG} with Trivy..."
-            sh '''
-               trivy image --exit-code 1 \
-                    --severity LOW,MEDIUM \
-                    --quiet \
-                    --format json -o trivy-image-results.json \
+            sh """
+               trivy image --exit-code 1 \\
+                    --severity LOW,MEDIUM \\
+                    --quiet \\
+                    --format json -o trivy-image-results.json \\
                     ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG}
-            '''
+            """
 
             echo "Converting Trivy JSON report to HTML..."
             sh '''
