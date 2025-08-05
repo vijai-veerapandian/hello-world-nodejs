@@ -9,7 +9,6 @@ tools {
 environment {
     NODE_ENV = 'test'
     PORT = 3000
-    // Define your Docker image name. Replace with your Docker Hub username or registry path.
     DOCKER_IMAGE_NAME = 'vijaiv/hello-world-nodejs'
     IMAGE_TAG         = "v1.0.${env.BUILD_NUMBER}"
     CONTAINER_NAME    = "hello-world-test-${env.BUILD_NUMBER}"
@@ -35,7 +34,6 @@ stages {
             stage('Dependency Scanning (OWASP)') {
                 steps {
                     echo 'Running OWASP Dependency Check...'
-                    // Use withCredentials to securely inject the NVD API key
                     withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_TOKEN')]) {
                         dependencyCheck(
                             additionalArguments: """
@@ -64,7 +62,6 @@ stages {
                 }
                 post {
                     always {
-                        // Archive test results if you generate them
                         junit testResults: 'test-results.xml'
                         echo 'Unit testing completed.'
                     }
@@ -84,9 +81,6 @@ stages {
     stage('SAST (SonarQube)') {
         steps {
             echo "Running SonarQube analysis..."
-            // The withSonarQubeEnv wrapper injects the server URL and authentication token.
-            // Since the scanner is not being found in the PATH, we will get its location
-            // from the tool configuration and call it with an absolute path. This is the most reliable method.
             withSonarQubeEnv('sonarqube-server') {
                 script {
                     def scannerHome = tool 'sonarqube-scanner-7'
@@ -111,9 +105,7 @@ stages {
                 echo "Starting container ${env.CONTAINER_NAME} from image ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG} for testing..."
                 // Run the container in detached mode and give it a name for easy cleanup
                 sh "docker run -d --name ${env.CONTAINER_NAME} -p 3000:3000 ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG}"
-                
-                // Wait for the container to become healthy by polling its health check status.
-                // This is more robust than a fixed sleep timer.
+
                 echo "Waiting for container to become healthy..."
                 timeout(time: 2, unit: 'MINUTES') {
                     while (true) {
@@ -142,7 +134,6 @@ stages {
             always {
                 script {
                     echo "Stopping and removing container ${env.CONTAINER_NAME}..."
-                    // Stop and remove the test container, ignoring errors if it doesn't exist
                     sh "docker stop ${env.CONTAINER_NAME} || true"
                     sh "docker rm ${env.CONTAINER_NAME} || true"
                 }
@@ -153,10 +144,6 @@ stages {
     stage('Scan Docker Image with Trivy') {
         steps {
             echo "Scanning Docker image ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG} with Trivy..."
-            // This step requires Trivy to be installed on the agent 'vm01'.
-            // It will fail the build if Trivy finds any HIGH or CRITICAL vulnerabilities.
-            // You can adjust the --severity flag as needed (e.g., UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL).
-            // We scan for vulnerabilities and secrets, outputting the raw data to a JSON file.
             sh '''
                trivy image --exit-code 1 \\
                     --severity HIGH,CRITICAL,LOW,MEDIUM \\
@@ -166,7 +153,6 @@ stages {
             '''
 
             echo "Converting Trivy JSON report to HTML..."
-            // Use Trivy's built-in HTML template to convert the JSON results to a readable HTML report.
             sh '''
                 trivy convert --format template --template "@contrib/html.tpl" -o trivy-report.html trivy-image-results.json
             '''
@@ -180,9 +166,6 @@ stages {
     }
 
     stage('Push Docker Image') {
-        // This stage is disabled by default. 
-        // Enable it by changing the expression or tying it to a specific branch, e.g., when { branch 'main' }
-        // It requires Docker Hub credentials configured in Jenkins with the ID 'dockerhub-credentials'.
         when { expression { false } }
         steps {
             withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
