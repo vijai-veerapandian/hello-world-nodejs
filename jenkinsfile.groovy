@@ -78,20 +78,18 @@ stages {
                 }
             }
 
-            stage('SAST (SonarQube)') {
-                steps {
-                    echo "Running SonarQube analysis..."
-                    withSonarQubeEnv('sonarqube-server') {
-                        script {
-                            // Use the tool name 'sonarqube-scanner-7' from your Jenkins Global Tool Configuration
-                            def scannerHome = tool 'sonarqube-scanner-7'
-                            sh "${scannerHome}/bin/sonar-scanner"
-                        }
-                    }
-                }
+        }
+    }
+
+    stage('SAST (SonarQube)') {
+        steps {
+            echo "Running SonarQube analysis..."
+                withSonarQubeEnv('sonarqube-server') {
+                    sh 'sonar-scanner'
             }
         }
     }
+
 
     stage('Build Docker Image') {
         steps {
