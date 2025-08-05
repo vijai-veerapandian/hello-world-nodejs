@@ -234,6 +234,7 @@ sudo apt-get install trivy -y
 trivy --version
 ```
 
+![trivy](./assets/2025-08-05-044220.jpg)
 
 ## Docker Usage
 
