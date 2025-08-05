@@ -236,11 +236,14 @@ trivy --version
 
 ![trivy](./assets/2025-08-05-044220.jpg)
 
-## Docker Usage
+## Implementing Docker
 
 The project includes two Dockerfiles:
 -   `Dockerfile`: For creating a lean, optimized production image.
 -   `Dockerfile.dev`: For creating a development environment with all dependencies needed for testing.
+
+
+![docker](./assets/2025-08-05-062453.jpg)
 
 ### Build Images
 
