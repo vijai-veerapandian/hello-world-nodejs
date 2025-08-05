@@ -205,6 +205,36 @@ Lets re-run the pipeline.
 
 ![pipeline](./assets/2025-08-04-225720.jpg)
 
+
+
+#### Implement Dockerization of the application and enable the Jenkins pipeline to do it.
+
+1. Add Docker hub credentials into the Global credentials in the Jenkins master Manage jenkins setting.
+
+![docker](./assets/2025-08-05-010622.jpg)
+
+
+
+#### Implement Trivy for vulnerability scanning.
+
+1. Install Trivy on the Jenkins VM agent running which will be running the jobs.
+
+```
+sudo apt-get update
+sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo gpg --dearmor -o /usr/share/keyrings/trivy.gpg
+
+
+echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/trivy.list
+
+sudo apt-get update
+sudo apt-get install trivy -y
+
+trivy --version
+```
+
+
 ## Docker Usage
 
 The project includes two Dockerfiles:
