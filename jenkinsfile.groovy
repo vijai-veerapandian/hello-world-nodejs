@@ -139,29 +139,6 @@ stages {
         }
     }
 
-    post {
-        always {
-            junit allowEmptyResults: true, stdioRetention: '', testResults: 'test-results.xml'
-            junit allowEmptyResults: true, stdioRetention: '', testResults: 'dependency-check-junit.xml'
-
-            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './',
-            reportFiles: 'trivy-image-CRITICAL-results.html', reportName: 'Trivy Image Critical Vul Report',
-            reportTitles: '', useWrapperFileDirectly: true])
-
-            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './',
-            reportFiles: 'trivy-image-MEDIUM-results.html', reportName: 'Trivy Image Medium Vul Report',
-            reportTitles: '', useWrapperFileDirectly: true])
-
-            publishHTML([allowEmptyResults: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './',
-            reportFiles: 'dependency-check-report.html', reportName: 'OWASP Dependency Check Report',
-            reportTitles: '', useWrapperFileDirectly: true])
-
-            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './',
-            reportFiles: 'sonarqube-report.html', reportName: 'SonarQube Analysis Report',
-            reportTitles: '', useWrapperFileDirectly: true])
-        }
-    }
-
     stage('Push Docker Image') {
         when { expression { false } }
         steps {
@@ -182,6 +159,25 @@ stages {
 post {
     always {
         echo 'Cleaning up...'
+            junit allowEmptyResults: true, stdioRetention: '', testResults: 'test-results.xml'
+            junit allowEmptyResults: true, stdioRetention: '', testResults: 'dependency-check-junit.xml'
+
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './',
+            reportFiles: 'trivy-image-CRITICAL-results.html', reportName: 'Trivy Image Critical Vul Report',
+            reportTitles: '', useWrapperFileDirectly: true])
+
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './',
+            reportFiles: 'trivy-image-MEDIUM-results.html', reportName: 'Trivy Image Medium Vul Report',
+            reportTitles: '', useWrapperFileDirectly: true])
+
+            publishHTML([allowEmptyResults: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './',
+            reportFiles: 'dependency-check-report.html', reportName: 'OWASP Dependency Check Report',
+            reportTitles: '', useWrapperFileDirectly: true])
+
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './',
+            reportFiles: 'sonarqube-report.html', reportName: 'SonarQube Analysis Report',
+            reportTitles: '', useWrapperFileDirectly: true])
+
     }
     success {
         echo 'Pipeline completed successfully! ✅'
