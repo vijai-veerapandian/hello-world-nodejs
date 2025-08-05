@@ -192,9 +192,16 @@ and also update the jenkins.groovy file to use sonarqube-server
     }
 ```
 
+#### Create, sonar-project.properties file, which makes sure Sonarqube points to "Hello world Node JS" project.
+
 Lets re-run the pipeline.
 
 ![pipeline](./assets/2025-08-04-195200.jpg)
+
+![pipeline](./assets/2025-08-04-224251.jpg)
+
+
+
 
 ## Docker Usage
 
