@@ -245,6 +245,14 @@ The project includes two Dockerfiles:
 
 ![docker](./assets/2025-08-05-062453.jpg)
 
+
+### Implement Build Docker Image and Trivy Vulnerability scanning and Push Docker Image on your jenkinsfile.groovy
+
+
+![docker](./assets/2025-08-05-180108.jpg)
+
+
+
 ### Build Images
 
 -   **Production Image:**
