@@ -4,7 +4,6 @@ agent {
 }
 tools {
     nodejs 'NodeJS-18'
-    sonarScanner 'sonarqube-scanner-7'
 }
 
 environment {
@@ -97,8 +96,13 @@ stages {
     
     stage('SAST - SonarQube') {
         steps {
-            withSonarQubeEnv('sonarqube-server') {
-                sh 'sonar-scanner'
+            // To avoid PATH issues, we explicitly find the tool's home directory
+            // and call the executable using its full path.
+            script {
+                def scannerHome = tool 'sonarqube-scanner-7'
+                withSonarQubeEnv('sonarqube-server') {
+                    sh "'${scannerHome}/bin/sonar-scanner'"
+                }
             }
         }
     }
