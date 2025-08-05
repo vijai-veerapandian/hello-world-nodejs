@@ -105,7 +105,7 @@ stages {
             echo "Scanning Docker image ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG} with Trivy..."
             sh """
                trivy image --exit-code 1 \\
-                    --severity LOW,MEDIUM \\
+                    --severity CRITICAL \\
                     --quiet \\
                     --format json -o trivy-image-results.json \\
                     ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG}
