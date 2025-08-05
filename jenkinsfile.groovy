@@ -81,11 +81,12 @@ stages {
             stage('SAST (SonarQube)') {
                 steps {
                     echo "Running SonarQube analysis..."
-                    // The withSonarQubeEnv wrapper injects the server config and finds the scanner tool.
-                    // It uses the server name 'sonarqube-server' from Jenkins system configuration
-                    // and requires a 'sonar-project.properties' file in the repository root.
-                withSonarQubeEnv('sonarqube-server') {
-                        sh 'sonar-scanner'
+                    withSonarQubeEnv('sonarqube-server') {
+                        script {
+                            // Use the tool name 'sonarqube-scanner-7' from your Jenkins Global Tool Configuration
+                            def scannerHome = tool 'sonarqube-scanner-7'
+                            sh "${scannerHome}/bin/sonar-scanner"
+                        }
                     }
                 }
             }
