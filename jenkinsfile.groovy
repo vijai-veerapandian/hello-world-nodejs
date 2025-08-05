@@ -9,22 +9,11 @@ tools {
 environment {
     NODE_ENV = 'test'
     PORT = 3000
+    // Define your Docker image name. Replace with your Docker Hub username or registry path.
+    DOCKER_IMAGE_NAME = 'vijai-veerapandian/hello-world-nodejs'
 }
 
 stages {
-    stage('Setup') {
-        steps {
-            echo 'Ensuring Node.js is available...'
-            sh '''
-                if ! command -v node >/dev/null; then
-                    echo "Node.js not found in PATH!"
-                    exit 1
-                fi
-                echo "Using Node version: $(node -v)"
-                '''
-        }
-    }
-
     stage('Checkout') {
         steps {
             echo 'Checking out source code...'
@@ -39,11 +28,11 @@ stages {
         }
     }
     
-    stage('Parallel Testing and Scanning') {
+    stage('Analysis & Testing') {
         parallel {
-            stage('Dependency Scanning') {
+            stage('Dependency Scanning (OWASP)') {
                 steps {
-                    echo 'Running OWASP Dependency Check..'
+                    echo 'Running OWASP Dependency Check...'
                     // Use withCredentials to securely inject the NVD API key
                     withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_TOKEN')]) {
                         dependencyCheck(
@@ -57,6 +46,12 @@ stages {
                         )
                     }
                 }
+                post {
+                    always {
+                        echo "Archiving OWASP Dependency-Check report..."
+                        archiveArtifacts artifacts: 'dependency-check-report.html', allowEmptyArchive: true
+                    }
+                }
             }
                 
             stage('Unit Testing') {
@@ -68,74 +63,139 @@ stages {
                 post {
                     always {
                         // Archive test results if you generate them
-                        echo 'Test stage completed'
                         junit testResults: 'test-results.xml'
+                        echo 'Unit testing completed.'
+                    }
+                }
+            }
+
+            stage('Security Audit (NPM)') {
+                steps {
+                    echo 'Running NPM security audit...'
+                    sh 'npm audit --audit-level=critical'
+                }
+            }
+
+            stage('SAST (SonarQube)') {
+                steps {
+                    echo "Running SonarQube analysis..."
+                    // The withSonarQubeEnv wrapper injects the server config and finds the scanner tool.
+                    // It uses the server name 'sonarqube-server' from Jenkins system configuration
+                    // and requires a 'sonar-project.properties' file in the repository root.
+                withSonarQubeEnv('sonarqube-server') {
+                        sh 'sonar-scanner'
                     }
                 }
             }
         }
     }
-    
-    stage('Code Quality') {
-        parallel {
-            stage('Lint') {
-                steps {
-                    echo 'Running linting...'
-                    // Assuming you have a lint script in package.json. If not, this will fail gracefully.
-                    sh 'npm run lint'
-                }
-            }
-            stage('Security Audit') {
-                steps {
-                    echo 'Running security audit...'
-                    sh 'npm audit --audit-level=critical'
-                }
-            }
-        }
-    }
-    
-    stage('SAST - SonarQube') {
+
+    stage('Build Docker Image') {
         steps {
-            // To avoid PATH issues, we explicitly find the tool's home directory
-            // and call the executable using its full path.
             script {
-                def scannerHome = tool 'sonarqube-scanner-7'
-                withSonarQubeEnv('sonarqube-server') {
-                    sh "'${scannerHome}/bin/sonar-scanner'"
-                }
+                echo "Building Docker image..."
+                def imageTag = "v1.0.${env.BUILD_NUMBER}"
+                sh "docker build -t ${env.DOCKER_IMAGE_NAME}:${imageTag} ."
+                sh "docker tag ${env.DOCKER_IMAGE_NAME}:${imageTag} ${env.DOCKER_IMAGE_NAME}:latest"
             }
         }
     }
-    
-    stage('Build') {
+
+    stage('Test Built Image') {
         steps {
-            echo 'Building application...'
-            sh 'npm run build || echo "No build script found, skipping..."'
-        }
-    }
-    
-    stage('Start Application') {
-        steps {
-            echo 'Starting application for testing...'
             script {
-                // Start the application in background
-                sh 'npm start &'
-                sh 'sleep 10' // Wait for app to start
+                def imageTag = "v1.0.${env.BUILD_NUMBER}"
+                def containerName = "hello-world-test-${env.BUILD_NUMBER}"
+
+                echo "Starting container ${env.DOCKER_IMAGE_NAME}:${imageTag} for testing..."
+                // Run the container in detached mode and give it a name for easy cleanup
+                sh "docker run -d --name ${containerName} -p 3000:3000 ${env.DOCKER_IMAGE_NAME}:${imageTag}"
                 
-                // Test if application is running
-                sh 'curl -f http://localhost:3000/ || exit 1'
-                sh 'curl -f http://localhost:3000/api/health || exit 1'
+                // Wait for the container to become healthy by polling its health check status.
+                // This is more robust than a fixed sleep timer.
+                echo "Waiting for container to become healthy..."
+                timeout(time: 2, unit: 'MINUTES') {
+                    while (true) {
+                        // Inspect the container's health status
+                        def healthStatus = sh(script: "docker inspect --format '{{.State.Health.Status}}' ${containerName}", returnStdout: true).trim()
+                        if (healthStatus == 'healthy') {
+                            echo "Container is healthy!"
+                            break
+                        }
+                        if (healthStatus == 'unhealthy') {
+                            error("Container failed its health check.")
+                        }
+                        echo "Container status is '${healthStatus}'. Waiting..."
+                        sleep 5 // Wait 5 seconds before polling again
+                    }
+                }
                 
-                echo 'Application tests passed!'
+                echo "Testing container endpoints..."
+                sh "curl -f --retry 3 --retry-delay 5 http://localhost:3000/ || exit 1"
+                sh "curl -f --retry 3 --retry-delay 5 http://localhost:3000/api/health || exit 1"
+                
+                echo 'Container tests passed!'
             }
         }
         post {
             always {
                 script {
-                    // Stop the application
-                    sh 'pkill -f "node server.js" || true'
-                    sh 'sleep 2'
+                    def containerName = "hello-world-test-${env.BUILD_NUMBER}"
+                    echo "Stopping and removing container ${containerName}..."
+                    // Stop and remove the test container, ignoring errors if it doesn't exist
+                    sh "docker stop ${containerName} || true"
+                    sh "docker rm ${containerName} || true"
                 }
+            }
+        }
+    }
+
+    stage('Scan Docker Image with Trivy') {
+        steps {
+            script {
+                def imageTag = "v1.0.${env.BUILD_NUMBER}"
+                echo "Scanning Docker image ${env.DOCKER_IMAGE_NAME}:${imageTag} with Trivy..."
+                // This step requires Trivy to be installed on the agent 'vm01'.
+                // It will fail the build if Trivy finds any HIGH or CRITICAL vulnerabilities.
+                // You can adjust the --severity flag as needed (e.g., UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL).
+                // We scan for vulnerabilities and secrets, outputting the raw data to a JSON file.
+                sh '''
+                   trivy image --exit-code 1 \
+                        --severity HIGH,CRITICAL,LOW,MEDIUM \
+                        --scanners vuln,secret \
+                        --format json -o trivy-image-results.json \
+                        ${env.DOCKER_IMAGE_NAME}:${imageTag}
+                '''
+
+                echo "Converting Trivy JSON report to HTML..."
+                // Use Trivy's built-in HTML template to convert the JSON results to a readable HTML report.
+                sh '''
+                    trivy convert --format template --template "@contrib/html.tpl" -o trivy-report.html trivy-image-results.json
+                '''
+            }
+        }
+        post {
+            always {
+                echo "Archiving Trivy scan reports (JSON and HTML)..."
+                archiveArtifacts artifacts: 'trivy-image-results.json, trivy-report.html', allowEmptyArchive: true
+            }
+        }
+    }
+
+    stage('Push Docker Image') {
+        // This stage is disabled by default. 
+        // Enable it by changing the expression or tying it to a specific branch, e.g., when { branch 'main' }
+        // It requires Docker Hub credentials configured in Jenkins with the ID 'dockerhub-credentials'.
+        when { expression { false } }
+        steps {
+            withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
+                sh "docker push ${env.DOCKER_IMAGE_NAME} --all-tags"
+            }
+        }
+        post {
+            always {
+                sh 'docker logout'
             }
         }
     }
@@ -144,7 +204,6 @@ stages {
 post {
     always {
         echo 'Cleaning up...'
-        sh 'pkill -f "node server.js" || true'
     }
     success {
         echo 'Pipeline completed successfully! ✅'
