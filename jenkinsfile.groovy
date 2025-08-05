@@ -101,18 +101,27 @@ stages {
 
     stage('Test Built Image') {
         steps {
-            echo "Starting container ${env.CONTAINER_NAME} from image ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG} for testing..."
-            // Run the container in detached mode and give it a name for easy cleanup
-            sh "docker run -d --name ${env.CONTAINER_NAME} -p 3000:3000 ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG}"
+            script {
+                echo "Starting container ${env.CONTAINER_NAME} from image ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG} for testing..."
+                sh "docker run -d --name ${env.CONTAINER_NAME} -p 3000:3000 ${env.DOCKER_IMAGE_NAME}:${env.IMAGE_TAG}"
 
-            echo "Waiting 15 seconds for container to start..."
-            sh "sleep 15"
+                echo "Waiting for application to become available..."
+                timeout(time: 1, unit: 'MINUTES') {
 
-            echo "Testing container endpoints..."
-            sh "curl -f --retry 3 --retry-delay 5 http://localhost:3000/ || exit 1"
-            sh "curl -f --retry 3 --retry-delay 5 http://localhost:3000/api/health || exit 1"
-            
-            echo 'Container tests passed!'
+                    sh '''
+                        until curl -s -f http://localhost:3000/api/health > /dev/null; do
+                            echo "Application not ready yet. Waiting 5 seconds..."
+                            sleep 5
+                        done
+                    '''
+                }
+
+                echo "Application is ready. Validating endpoints..."
+                sh "curl -f http://localhost:3000/"
+                sh "curl -f http://localhost:3000/api/health"
+                
+                echo 'Container tests passed!'
+            }
         }
         post {
             always {
