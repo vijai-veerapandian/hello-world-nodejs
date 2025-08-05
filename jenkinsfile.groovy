@@ -4,6 +4,7 @@ agent {
 }
 tools {
     nodejs 'NodeJS-18'
+    tool 'sonarqube-scanner-7'
 }
 
 environment {
@@ -84,8 +85,8 @@ stages {
     stage('SAST (SonarQube)') {
         steps {
             echo "Running SonarQube analysis..."
-                withSonarQubeEnv('sonarqube-server') {
-                    sh 'sonar-scanner'
+            withSonarQubeEnv('sonarqube-server') {
+                sh 'sonar-scanner'
             }
         }
     }
