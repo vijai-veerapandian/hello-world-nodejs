@@ -162,7 +162,7 @@ pipeline {
         always {
             echo 'Cleaning up...'
             junit allowEmptyResults: true, stdioRetention: '', testResults: 'test-results.xml'
-            junit allowEmptyResults: true, stdioRetention: '', testResults: 'dependency-check-junit.xml'
+//            junit allowEmptyResults: true, stdioRetention: '', testResults: 'dependency-check-junit.xml'
 
             publishHTML([
                 allowMissing: true, 
