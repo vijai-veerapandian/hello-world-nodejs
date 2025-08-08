@@ -75,7 +75,7 @@ pipeline {
                     steps {
                         echo 'Running NPM security audit...'
                         sh 'npm audit fix'
-                        sh 'npm audit --audit-level=critical'
+                        sh 'npm audit --audit-level=moderate'
                     }
                 }
             }
