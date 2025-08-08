@@ -146,7 +146,6 @@ pipeline {
                         --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
                         --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
 
-                    trivy convert --format cyclonedx --output sbom.json sbom.xml
                     trivy convert \
                         --format template \
                         --template "@/usr/local/share/trivy/templates/html.tpl" \
