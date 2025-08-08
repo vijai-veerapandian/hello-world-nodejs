@@ -16,10 +16,10 @@
         "nodejs",
         "express"
     ],
-    "author": "Your Name",
+    "author": "Vijai Veerapandian",
     "license": "MIT",
     "dependencies": {
-        "express": "^5.1.0"
+        "express": "^4.21.2"
     },
     "devDependencies": {
         "jest": "^29.7.0",
