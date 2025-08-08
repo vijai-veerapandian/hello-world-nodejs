@@ -146,11 +146,12 @@ pipeline {
                         --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
                         --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
 
-                    trivy convert \
-                        --format template \
-                        --template "@/usr/local/share/trivy/templates/html.tpl" \
-                        --output sbom.html \
-                        sbom.xml   
+                    # Install CycloneDX report generator and create HTML report from SBOM
+                    echo "Installing CycloneDX report tool..."
+                    npm install -g @cyclonedx/bom-report-tool
+
+                    echo "Generating HTML report from sbom.json..."
+                    cyclonedx-bom-report --input-file sbom.json --output-file sbom.html
                     '''
                     archiveArtifacts artifacts: 'sbom.*', fingerprint: true
                 }
@@ -223,6 +224,17 @@ pipeline {
                 reportDir: './',
                 reportFiles: 'sonarqube-report.html', 
                 reportName: 'SonarQube Analysis Report',
+                reportTitles: '', 
+                useWrapperFileDirectly: true
+            ])
+
+            publishHTML([
+                allowMissing: true, 
+                alwaysLinkToLastBuild: true, 
+                keepAll: true, 
+                reportDir: './',
+                reportFiles: 'sbom.html', 
+                reportName: 'SBOM Report (CycloneDX)',
                 reportTitles: '', 
                 useWrapperFileDirectly: true
             ])
