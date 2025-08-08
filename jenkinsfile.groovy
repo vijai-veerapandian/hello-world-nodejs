@@ -26,6 +26,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing Node.js dependencies...'
+                sh 'rm -rf node_modules package-lock.json'
                 sh 'npm ci'
             }
         }
@@ -73,6 +74,7 @@ pipeline {
                 stage('Security Audit (NPM)') {
                     steps {
                         echo 'Running NPM security audit...'
+                        sh 'npm audit fix'
                         sh 'npm audit --audit-level=critical'
                     }
                 }
@@ -162,7 +164,7 @@ pipeline {
         always {
             echo 'Cleaning up...'
             junit allowEmptyResults: true, stdioRetention: '', testResults: 'test-results.xml'
-//            junit allowEmptyResults: true, stdioRetention: '', testResults: 'dependency-check-junit.xml'
+            junit allowEmptyResults: true, stdioRetention: '', testResults: 'dependency-check-junit.xml'
 
             publishHTML([
                 allowMissing: true, 
