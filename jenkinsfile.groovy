@@ -120,7 +120,12 @@ pipeline {
 
                     trivy image --format cyclonedx --output sbom.xml \
                         --quiet \
-                        ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}                
+                        ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}   
+
+                    trivy image --format cyclonedx --output sbom.json \
+                        --quiet \
+                        ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
+                    
                     '''
             }
             post {
