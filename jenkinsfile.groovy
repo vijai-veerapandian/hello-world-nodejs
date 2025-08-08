@@ -27,7 +27,7 @@ pipeline {
             steps {
                 echo 'Installing Node.js dependencies...'
                 sh 'rm -rf node_modules package-lock.json'
-                sh 'npm ci'
+                sh 'npm install'
             }
         }
         
