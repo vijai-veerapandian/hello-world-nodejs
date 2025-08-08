@@ -44,6 +44,7 @@ pipeline {
                                     --format ALL
                                     --nvdApiKey ${NVD_API_TOKEN}
                                     --noupdate
+                                    --suppression suppressions.xml
                                 """,
                                 odcInstallation: 'OWASP-dependency-check-10'
                             )
