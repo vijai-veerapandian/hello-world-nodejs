@@ -118,11 +118,11 @@ pipeline {
                         --format json -o trivy-image-MEDIUM-results.json \
                         ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
 
-                    trivy image --format cyclonedx --output sbom.xml \
+                    trivy image --scanners vuln --format cyclonedx --output sbom.xml \
                         --quiet \
                         ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}   
 
-                    trivy image --format cyclonedx --output sbom.json \
+                    trivy image --scanners vuln --format cyclonedx --output sbom.json \
                         --quiet \
                         ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
                     
