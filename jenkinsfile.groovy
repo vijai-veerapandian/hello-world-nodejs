@@ -117,6 +117,10 @@ pipeline {
                         --quiet \
                         --format json -o trivy-image-MEDIUM-results.json \
                         ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
+
+                    trivy image --format cyclonedx --output sbom.xml \
+                        --quiet \
+                        ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}                
                     '''
             }
             post {
@@ -136,7 +140,15 @@ pipeline {
                     trivy convert \
                         --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
                         --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
+
+                    trivy convert --format cyclonedx-json --output sbom.json sbom.xml
+                    trivy convert \
+                        --format template \
+                        --template "@/usr/local/share/trivy/templates/html.tpl" \
+                        --output sbom.html \
+                        sbom.xml   
                     '''
+                    archiveArtifacts artifacts: 'sbom.*', fingerprint: true
                 }
             }
         }
