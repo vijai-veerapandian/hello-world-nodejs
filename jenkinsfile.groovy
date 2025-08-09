@@ -151,7 +151,10 @@ pipeline {
                     npm install -g sbom-report
 
                     echo "Generating HTML report from sbom.json..."
-                    sbom-report --input sbom.json --output sbom-report.html --format html
+                    sbom-report generate sbom.json -t 'SBOM Security Report' > sbom-report.md
+                    npm install -g showdown
+
+                    showdown makehtml -i sbom-report.md -o sbom-report.html -p github -c completeHTMLDocument metadata
                     '''
                     archiveArtifacts artifacts: 'sbom.*', fingerprint: true
                 }
