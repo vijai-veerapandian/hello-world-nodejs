@@ -148,10 +148,10 @@ pipeline {
 
                     # Install CycloneDX report generator and create HTML report from SBOM
                     echo "Installing CycloneDX HTML report viewer..."
-                    npm install -g cdx-viewer
+                    npm install -g sbom-report
 
                     echo "Generating HTML report from sbom.json..."
-                    cdx-viewer -i sbom.json -o sbom.html
+                    sbom-report --input sbom.json --output sbom-report.html --format html
                     '''
                     archiveArtifacts artifacts: 'sbom.*', fingerprint: true
                 }
