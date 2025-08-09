@@ -147,7 +147,6 @@ pipeline {
                         --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
 
                     npx cyclonedx validate --input-file sbom.json
-                    npx cyclonedx convert --input-file sbom.json --output-format html --output-file sbom.html
                     '''
                     archiveArtifacts artifacts: 'sbom.*', fingerprint: true
                 }
@@ -185,7 +184,6 @@ pipeline {
                     [file: 'trivy-image-CRITICAL-results.html', name: 'Trivy Critical Vul Report'],
                     [file: 'trivy-image-MEDIUM-results.html',   name: 'Trivy Medium Vul Report'],
                     [file: 'dependency-check-report.html',    name: 'OWASP Dependency Check Report'],
-                    [file: 'sbom.html',                       name: 'SBOM Report (CycloneDX)']
                 ]
 
                 reports.each { report ->
