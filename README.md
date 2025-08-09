@@ -63,6 +63,18 @@ npm run test:watch
 
 Create jenkinsfile and create a pipepline 
 
+![create-pipeline](./assets/2025-08-08-234510.jpg)
+
+![create-pipeline](./assets/2025-08-08-184640.jpg)
+
+![create-pipeline](./assets/2025-08-08-234627.jpg)
+
+
+![pipeline-configure](./assets/2025-08-08-234710.jpg)
+
+![run-pipeline](./assets/2025-08-08-234910.jpg)
+
+
 ![install](./assets/2025-08-04-185855.jpg)
 
 ![install](./assets/2025-08-04-185948.jpg)
@@ -236,7 +248,7 @@ trivy --version
 
 ![trivy](./assets/2025-08-05-044220.jpg)
 
-## Implementing Docker
+#### Implementing Docker
 
 The project includes two Dockerfiles:
 -   `Dockerfile`: For creating a lean, optimized production image.
@@ -246,10 +258,28 @@ The project includes two Dockerfiles:
 ![docker](./assets/2025-08-05-062453.jpg)
 
 
-### Implement Build Docker Image and Trivy Vulnerability scanning and Push Docker Image on your jenkinsfile.groovy
+#### Implement Build Docker Image and Trivy Vulnerability scanning and Push Docker Image on your jenkinsfile.groovy
 
 
 ![docker](./assets/2025-08-05-180108.jpg)
+
+
+#### Finally, producation ready Image is prepared and pushed into Docker hub
+
+![docker](./assets/2025-08-05-180443.jpg)
+
+
+#### Integrate AKS 
+
+
+#### Implement ArgoCD 
+
+
+
+#### Test and Enable CD Continous Delivery 
+
+#### Integrate Slack notification
+
 
 
 
@@ -278,41 +308,8 @@ The project includes two Dockerfiles:
     docker run --rm hello-world-app:dev npm test
     ```
 
-## Kubernetes Deployment
-
-1.  **Build and Push Image to a Registry**
-
-    First, build the production image and push it to a container registry (e.g., Docker Hub, GCR, ECR).
-
-    ```bash
-    # Tag the image with your registry's path
-    docker tag hello-world-app your-registry/hello-world-app:latest
-
-    # Push the image
-    docker push your-registry/hello-world-app:latest
-    ```
-    *Note: For multi-architecture builds (e.g., `linux/amd64`, `linux/arm64`), use `docker buildx`.*
-
-2.  **Update Manifest**
-
-    In `k8s-deployment.yaml`, change the `spec.template.spec.containers[0].image` field to point to the image you just pushed.
-
-3.  **Deploy to Cluster**
-
-    Apply the Kubernetes manifests to your cluster.
-    ```bash
-    kubectl apply -f k8s-deployment.yaml
-    ```
-
-4.  **Verify Deployment**
-
-    ```bash
-    # Check the status of your deployment, pods, and service
-    kubectl get deployment,pod,svc
-
-    # Get the external IP (if using a LoadBalancer service)
-    kubectl get service hello-world-service
-    ```
+ 
+```
 
 ## API Endpoints
 
@@ -332,7 +329,6 @@ The project includes two Dockerfiles:
 ```
 .
 ├── .github/workflows/     # CI/CD pipeline configuration (e.g., GitHub Actions)
-├── k8s-deployment.yaml    # Kubernetes deployment manifests
 ├── tests/                 # Test files
 │   └── server.test.js     # Application tests
 ├── .dockerignore          # Docker build exclusions
@@ -342,6 +338,8 @@ The project includes two Dockerfiles:
 ├── package.json           # NPM configuration and dependencies
 ├── README.md              # This file
 └── server.js              # Main application file
+└── suppressions.xml       # This file will suppress express version check
+
 ```
 
 ## Environment Variables
