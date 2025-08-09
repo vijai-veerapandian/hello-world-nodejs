@@ -69,17 +69,15 @@ Create jenkinsfile and create a pipepline
 
 ![create-pipeline](./assets/2025-08-08-234627.jpg)
 
-
 ![pipeline-configure](./assets/2025-08-08-234710.jpg)
 
 ![run-pipeline](./assets/2025-08-08-234910.jpg)
 
+![configure](./assets/2025-08-04-185855.jpg)
 
-![install](./assets/2025-08-04-185855.jpg)
+![configure](./assets/2025-08-04-185948.jpg)
 
-![install](./assets/2025-08-04-185948.jpg)
-<image>
-<image>
+![run-pipeline](./assets/2025-08-08-234910.jpg)
 
 ![install](./assets/2025-08-04-042043.jpg)
 
