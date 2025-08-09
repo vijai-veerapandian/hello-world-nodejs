@@ -1,28 +1,34 @@
-# Dockerfile
-FROM node:18-alpine
+# Stage 1: Build dependencies
+# This stage installs production dependencies to keep the final image lean.
+FROM node:18-alpine AS deps
+WORKDIR /app
 
-# Set working directory
-WORKDIR /usr/src/app
+# Copy package files and install only production dependencies
+COPY package.json package-lock.json* ./
+RUN npm install --only=production
 
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
-RUN npm ci --only=production
-
-# Copy application code
+# Stage 2: Build the application
+# This stage copies the source code and the installed dependencies.
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodejs -u 1001
+# Stage 3: Production image
+# This is the final, optimized image.
+FROM node:18-alpine
+WORKDIR /app
 
-# Change ownership of the working directory
-RUN chown -R nodejs:nodejs /usr/src/app
-USER nodejs
+# Create a non-root user for security
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
 
-# Expose port
+# Copy built assets from the builder stage
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/server.js ./
+COPY --from=builder /app/public ./public
+
 EXPOSE 3000
 
-# Start the application
-CMD ["npm", "start"]
+CMD ["node", "server.js"]

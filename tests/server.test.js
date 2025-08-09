@@ -4,12 +4,13 @@ const app = require('../server');
 
 describe('Hello World App', () => {
     describe('GET /', () => {
-        it('should return "Hello, World!" with status 200', async () => {
+        it('should return the static HTML page with status 200', async () => {
             const response = await request(app)
                 .get('/')
-                .expect(200);
+                .expect(200)
+                .expect('Content-Type', /html/);
 
-            expect(response.text).toBe('Hello, World! version1');
+            expect(response.text).toContain('<h1>Hello, World! version1</h1>');
         });
     });
 
