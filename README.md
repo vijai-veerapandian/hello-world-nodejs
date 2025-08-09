@@ -304,9 +304,6 @@ The project includes two Dockerfiles:
     docker run --rm hello-world-app:dev npm test
     ```
 
- 
-```
-
 ## API Endpoints
 
 -   `GET /` - Returns "Hello, World! version1"
