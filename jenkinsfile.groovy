@@ -180,61 +180,28 @@ pipeline {
             echo 'Cleaning up...'
             junit allowEmptyResults: true, stdioRetention: '', testResults: 'test-results.xml'
             junit allowEmptyResults: true, stdioRetention: '', testResults: 'dependency-check-junit.xml'
+            
+            script {
+                def reports = [
+                    [file: 'trivy-image-CRITICAL-results.html', name: 'Trivy Critical Vul Report'],
+                    [file: 'trivy-image-MEDIUM-results.html',   name: 'Trivy Medium Vul Report'],
+                    [file: 'dependency-check-report.html',    name: 'OWASP Dependency Check Report'],
+                    [file: 'sbom.html',                       name: 'SBOM Report (CycloneDX)']
+                ]
 
-            publishHTML([
-                allowMissing: true, 
-                alwaysLinkToLastBuild: true, 
-                keepAll: true, 
-                reportDir: './',
-                reportFiles: 'trivy-image-CRITICAL-results.html', 
-                reportName: 'Trivy Image Critical Vul Report',
-                reportTitles: '', 
-                useWrapperFileDirectly: true
-            ])
-
-            publishHTML([
-                allowMissing: true, 
-                alwaysLinkToLastBuild: true, 
-                keepAll: true, 
-                reportDir: './',
-                reportFiles: 'trivy-image-MEDIUM-results.html', 
-                reportName: 'Trivy Image Medium Vul Report',
-                reportTitles: '', 
-                useWrapperFileDirectly: true
-            ])
-
-            publishHTML([
-                allowMissing: true, 
-                alwaysLinkToLastBuild: true, 
-                keepAll: true, 
-                reportDir: './',
-                reportFiles: 'dependency-check-report.html', 
-                reportName: 'OWASP Dependency Check Report',
-                reportTitles: '', 
-                useWrapperFileDirectly: true
-            ])
-
-            publishHTML([
-                allowMissing: true, 
-                alwaysLinkToLastBuild: true, 
-                keepAll: true, 
-                reportDir: './',
-                reportFiles: 'sonarqube-report.html', 
-                reportName: 'SonarQube Analysis Report',
-                reportTitles: '', 
-                useWrapperFileDirectly: true
-            ])
-
-            publishHTML([
-                allowMissing: true, 
-                alwaysLinkToLastBuild: true, 
-                keepAll: true, 
-                reportDir: './',
-                reportFiles: 'sbom.html', 
-                reportName: 'SBOM Report (CycloneDX)',
-                reportTitles: '', 
-                useWrapperFileDirectly: true
-            ])
+                reports.each { report ->
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: './',
+                        reportFiles: report.file,
+                        reportName: report.name,
+                        reportTitles: '',
+                        useWrapperFileDirectly: true
+                    ])
+                }
+            }
         }
         
         success {

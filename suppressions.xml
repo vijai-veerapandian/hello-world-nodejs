@@ -5,7 +5,7 @@
         CVE-2024-10491 is a false positive for Express.js.
         This CVE affects a different component, not the Express.js framework.
         Reference: https://github.com/jeremylong/DependencyCheck/issues/7266
-        Express.js 4.21.2 and 5.1.0 are not affected by this vulnerability.
+        The latest versions of Express.js are not affected by this vulnerability.
         The vulnerability scanner incorrectly flagged Express.js due to component name confusion.
         ]]></notes>
         <packageUrl regex="true">^pkg:npm/express@.*$</packageUrl>
