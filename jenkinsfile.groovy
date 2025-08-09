@@ -31,18 +31,7 @@ pipeline {
             }
         }
         
-        stage('Generate Source SBOM') {
-            steps {
-                echo 'Generating SBOM from source dependencies...'
-                sh 'npx @cyclonedx/cyclonedx-npm --output-file source-sbom.xml'
-            }
-            post {
-                always {
-                    archiveArtifacts artifacts: 'source-sbom.xml', allowEmptyArchive: true
-                }
-            }
-        }
-        
+      
         stage('OWASP Analysis scanning & Unit Testing') {
             parallel {
                 stage('Dependency Scanning (OWASP)') {
@@ -121,21 +110,13 @@ pipeline {
                    trivy image --exit-code 1 \
                         --severity CRITICAL \
                         --quiet \
-                        --format json -o trivy-image-CRITICAL-results.json \
+                        --format json -o image-trivy-CRITICAL-results.json \
                         ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
                     
                     trivy image --exit-code 0 \
                         --severity LOW,MEDIUM,HIGH \
                         --quiet \
                         --format json -o image-trivy-MEDIUM-results.json \
-                        ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
-
-                    trivy image --scanners vuln --format cyclonedx --output image-sbom.xml \
-                        --quiet \
-                        ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}   
-
-                    trivy image --scanners vuln --format cyclonedx --output image-sbom.json \
-                        --quiet \
                         ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
                     
                     '''
@@ -149,16 +130,15 @@ pipeline {
                         --output image-trivy-MEDIUM-results.html image-trivy-MEDIUM-results.json
                     trivy convert \
                         --format template --template "@/usr/local/share/trivy/templates/html.tpl" \
-                        --output image-trivy-CRITICAL-results.html trivy-image-CRITICAL-results.json
+                        --output image-trivy-CRITICAL-results.html image-trivy-CRITICAL-results.json
 
                     trivy convert \
                         --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
                         --output image-trivy-MEDIUM-results.xml image-trivy-MEDIUM-results.json
                     trivy convert \
                         --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
-                        --output image-trivy-CRITICAL-results.xml trivy-image-CRITICAL-results.json
-                    '''
-                    archiveArtifacts artifacts: 'image-sbom.*', fingerprint: true
+                        --output image-trivy-CRITICAL-results.xml image-trivy-CRITICAL-results.json
+                    '''                    
                 }
             }
         }
