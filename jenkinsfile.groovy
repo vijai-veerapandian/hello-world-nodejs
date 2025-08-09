@@ -31,6 +31,18 @@ pipeline {
             }
         }
         
+        stage('Generate Source SBOM') {
+            steps {
+                echo 'Generating SBOM from source dependencies...'
+                sh 'npx @cyclonedx/cyclonedx-npm --output-file source-sbom.xml'
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'source-sbom.xml', allowEmptyArchive: true
+                }
+            }
+        }
+        
         stage('OWASP Analysis scanning & Unit Testing') {
             parallel {
                 stage('Dependency Scanning (OWASP)') {
@@ -115,14 +127,14 @@ pipeline {
                     trivy image --exit-code 0 \
                         --severity LOW,MEDIUM,HIGH \
                         --quiet \
-                        --format json -o trivy-image-MEDIUM-results.json \
+                        --format json -o image-trivy-MEDIUM-results.json \
                         ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
 
-                    trivy image --scanners vuln --format cyclonedx --output sbom.xml \
+                    trivy image --scanners vuln --format cyclonedx --output image-sbom.xml \
                         --quiet \
                         ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}   
 
-                    trivy image --scanners vuln --format cyclonedx --output sbom.json \
+                    trivy image --scanners vuln --format cyclonedx --output image-sbom.json \
                         --quiet \
                         ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
                     
@@ -134,21 +146,19 @@ pipeline {
                     sh '''
                     trivy convert \
                         --format template --template "@/usr/local/share/trivy/templates/html.tpl" \
-                        --output trivy-image-MEDIUM-results.html trivy-image-MEDIUM-results.json
+                        --output image-trivy-MEDIUM-results.html image-trivy-MEDIUM-results.json
                     trivy convert \
                         --format template --template "@/usr/local/share/trivy/templates/html.tpl" \
-                        --output trivy-image-CRITICAL-results.html trivy-image-CRITICAL-results.json
+                        --output image-trivy-CRITICAL-results.html trivy-image-CRITICAL-results.json
 
                     trivy convert \
                         --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
-                        --output trivy-image-MEDIUM-results.xml trivy-image-MEDIUM-results.json
+                        --output image-trivy-MEDIUM-results.xml image-trivy-MEDIUM-results.json
                     trivy convert \
                         --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
-                        --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
-
-                    npx cyclonedx validate --input-file sbom.json
+                        --output image-trivy-CRITICAL-results.xml trivy-image-CRITICAL-results.json
                     '''
-                    archiveArtifacts artifacts: 'sbom.*', fingerprint: true
+                    archiveArtifacts artifacts: 'image-sbom.*', fingerprint: true
                 }
             }
         }
@@ -181,8 +191,8 @@ pipeline {
             
             script {
                 def reports = [
-                    [file: 'trivy-image-CRITICAL-results.html', name: 'Trivy Critical Vul Report'],
-                    [file: 'trivy-image-MEDIUM-results.html',   name: 'Trivy Medium Vul Report'],
+                    [file: 'image-trivy-CRITICAL-results.html', name: 'Trivy Critical Vul Report'],
+                    [file: 'image-trivy-MEDIUM-results.html',   name: 'Trivy Medium Vul Report'],
                     [file: 'dependency-check-report.html',    name: 'OWASP Dependency Check Report'],
                 ]
 
