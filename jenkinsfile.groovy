@@ -148,7 +148,7 @@ pipeline {
                     
                     # Use the locally installed cdx-viewer (from package.json) to generate the report
                     echo "Generating HTML report from sbom.json..."
-                    npx cdx-viewer -i sbom.json -o sbom.html
+                    npx @cyclonedx/cdx-viewer -i sbom.json -o sbom.html
                     '''
                     archiveArtifacts artifacts: 'sbom.*', fingerprint: true
                 }
