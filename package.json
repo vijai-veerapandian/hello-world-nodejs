@@ -27,6 +27,6 @@
         "jest-junit": "^16.0.0",
         "nodemon": "^3.0.1",
         "supertest": "^6.3.3",
-        "@cyclonedx/cyclonedx-npm": "^1.15.0"
+        "@cyclonedx/cyclonedx-npm": "^4.0.0"
     }
 }

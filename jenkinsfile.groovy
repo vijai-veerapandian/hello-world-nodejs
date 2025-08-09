@@ -34,7 +34,7 @@ pipeline {
         stage('Generate Source SBOM') {
             steps {
                 echo 'Generating SBOM from source dependencies...'
-                sh 'npx @cyclonedx/cyclonedx-npm --output-file source-sbom.xml'
+                sh 'npx @cyclonedx/cyclonedx-npm --output source-sbom.xml --output-format xml'
             }
             post {
                 always {
