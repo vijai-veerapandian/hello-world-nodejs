@@ -148,7 +148,7 @@ pipeline {
                     
                     # Install CycloneDX report viewer and create HTML report from SBOM
                     echo "Installing CycloneDX HTML report viewer..."
-                    npm install -g cdx-viewer
+                    npm install -g cdx-viewer --registry https://registry.npmjs.org/
 
                     echo "Generating HTML report from sbom.json..."
                     cdx-viewer -i sbom.json -o sbom.html
