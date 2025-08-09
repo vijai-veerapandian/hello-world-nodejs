@@ -145,16 +145,13 @@ pipeline {
                     trivy convert \
                         --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
                         --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
-
-                    # Install CycloneDX report generator and create HTML report from SBOM
+                    
+                    # Install CycloneDX report viewer and create HTML report from SBOM
                     echo "Installing CycloneDX HTML report viewer..."
-                    npm install -g sbom-report
+                    npm install -g cdx-viewer
 
                     echo "Generating HTML report from sbom.json..."
-                    sbom-report generate sbom.json -t 'SBOM Security Report' > sbom-report.md
-                    npm install -g showdown
-
-                    showdown makehtml -i sbom-report.md -o sbom-report.html -p github -c completeHTMLDocument metadata
+                    cdx-viewer -i sbom.json -o sbom.html
                     '''
                     archiveArtifacts artifacts: 'sbom.*', fingerprint: true
                 }
