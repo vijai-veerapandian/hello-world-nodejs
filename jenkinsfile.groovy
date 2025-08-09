@@ -145,10 +145,12 @@ pipeline {
                     trivy convert \
                         --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
                         --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
-                    
-                    # Use the locally installed cdx-viewer (from package.json) to generate the report
+
+                    # Install the CycloneDX viewer globally and generate the HTML report
+                    echo "Installing CycloneDX HTML report viewer..."
+                    npm install -g @cyclonedx/cdx-viewer
                     echo "Generating HTML report from sbom.json..."
-                    npx @cyclonedx/cdx-viewer -i sbom.json -o sbom.html
+                    cdx-viewer -i sbom.json -o sbom.html
                     '''
                     archiveArtifacts artifacts: 'sbom.*', fingerprint: true
                 }
