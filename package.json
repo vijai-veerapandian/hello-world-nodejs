@@ -22,10 +22,11 @@
         "express": "^4.19.2"
     },
     "devDependencies": {
-        "eslint": "^8.57.0",
+
         "jest": "^29.7.0",
         "jest-junit": "^16.0.0",
         "nodemon": "^3.0.1",
-        "supertest": "^6.3.3"
+        "supertest": "^6.3.3",
+        "@cyclonedx/cli": "^4.0.0"
     }
 }
