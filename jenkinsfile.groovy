@@ -147,11 +147,11 @@ pipeline {
                         --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
 
                     # Install CycloneDX report generator and create HTML report from SBOM
-                    echo "Installing CycloneDX report tool..."
-                    npm install -g @cyclonedx/bom-report-tool
+                    echo "Installing CycloneDX HTML report viewer..."
+                    npm install -g sbom-report
 
                     echo "Generating HTML report from sbom.json..."
-                    cyclonedx-bom-report --input-file sbom.json --output-file sbom.html
+                    sbom-report --input sbom.json --output sbom-report.html --format html
                     '''
                     archiveArtifacts artifacts: 'sbom.*', fingerprint: true
                 }
