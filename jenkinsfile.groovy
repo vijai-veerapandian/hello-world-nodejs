@@ -26,8 +26,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing Node.js dependencies...'
-                sh 'rm -rf node_modules package-lock.json'
-                sh 'npm install'
+                sh 'npm ci'
             }
         }
         
@@ -86,13 +85,13 @@ pipeline {
         stage('SAST (SonarQube)') {
             steps {
                 echo "Running SonarQube analysis..."
+                 withSonarQubeEnv('sonarqube-server') {
                 withSonarQubeEnv('sonarqube-server') {
                     script {
                         def scannerHome = tool 'sonarqube-scanner-7'
                         sh "'${scannerHome}/bin/sonar-scanner'"
                     }
                 }
-            }
         }
 
         stage('Build Docker Image') {
