@@ -84,7 +84,6 @@ pipeline {
 
         stage('SAST (SonarQube)') {
             steps {
-                echo "Running SonarQube analysis..."
                  withSonarQubeEnv('sonarqube-server') {
                 withSonarQubeEnv('sonarqube-server') {
                     script {
@@ -92,6 +91,7 @@ pipeline {
                         sh "'${scannerHome}/bin/sonar-scanner'"
                     }
                 }
+                  }
         }
 
         stage('Build Docker Image') {

@@ -1,11 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="3" failures="0" errors="0" time="0.89">
-  <testsuite name="Hello World App" errors="0" failures="0" skipped="0" timestamp="2025-08-07T03:29:29" time="0.814" tests="3">
-    <testcase classname="Hello World App GET / should return &quot;Hello, World!&quot; with status 200" name="Hello World App GET / should return &quot;Hello, World!&quot; with status 200" time="0.028">
+<testsuites name="jest tests" tests="3" failures="1" errors="0" time="0.913">
+  <testsuite name="Hello World App" errors="0" failures="1" skipped="0" timestamp="2025-08-09T06:43:18" time="0.804" tests="3">
+    <testcase classname="Hello World App GET / should return the static HTML page with status 200" name="Hello World App GET / should return the static HTML page with status 200" time="0.051">
+      <failure>Error: expected 200 &quot;OK&quot;, got 404 &quot;Not Found&quot;
+    at Object.expect (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/tests/server.test.js:10:18)
+    at Promise.then.completed (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/jest-circus/build/run.js:121:9)
+    at run (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/jest-runner/build/runTest.js:444:34)
+----
+    at Test._assertStatus (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/supertest/lib/test.js:252:14)
+    at /home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/supertest/lib/test.js:308:13
+    at Test._assertFunction (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/supertest/lib/test.js:285:13)
+    at Test.assert (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/supertest/lib/test.js:164:23)
+    at Server.localAssert (/home/vijai/Documents/backup-2-arch/hello-world-nodejs/node_modules/supertest/lib/test.js:120:14)
+    at Object.onceWrapper (node:events:632:28)
+    at Server.emit (node:events:518:28)
+    at emitCloseNT (node:net:2419:8)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</failure>
     </testcase>
     <testcase classname="Hello World App GET /api/health should return health status with status 200" name="Hello World App GET /api/health should return health status with status 200" time="0.008">
     </testcase>
-    <testcase classname="Hello World App GET /nonexistent should return 404 for non-existent routes" name="Hello World App GET /nonexistent should return 404 for non-existent routes" time="0.005">
+    <testcase classname="Hello World App GET /nonexistent should return 404 for non-existent routes" name="Hello World App GET /nonexistent should return 404 for non-existent routes" time="0.003">
     </testcase>
   </testsuite>
 </testsuites>
